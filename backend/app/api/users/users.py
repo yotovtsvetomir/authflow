@@ -11,7 +11,7 @@ from fastapi import (
     File,
     UploadFile,
 )
-
+from urllib.parse import quote, unquote
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
@@ -298,6 +298,22 @@ async def refresh_session(
     return {"message": "Сесията е обновена", "session_id": session_id}
 
 
+BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+CYRILLIC_ALPHABET = (
+    "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮ"
+)
+
+to_map = dict(zip(BASE64_ALPHABET, CYRILLIC_ALPHABET))
+from_map = {v: k for k, v in to_map.items()}
+
+def to_cyrillic_alphabet(token: str) -> str:
+    return "".join(to_map.get(ch, ch) for ch in token)
+
+def from_cyrillic_alphabet(encoded: str) -> str:
+    return "".join(from_map.get(ch, ch) for ch in encoded)
+
+
 # ------------------------------
 # Password reset
 # ------------------------------
@@ -319,15 +335,16 @@ async def password_reset_request(
             status_code=403, detail="Нямате разрешение да извършите това действие."
         )
 
-    token = serializer.dumps(user.email, salt="password-reset-salt")
-    reset_token = PasswordResetToken(user_id=user.id, token=token)
+    raw_token = serializer.dumps(user.email, salt="password-reset-salt")
+    cyrillic_token = to_cyrillic_alphabet(raw_token)
+    reset_token = PasswordResetToken(user_id=user.id, token=cyrillic_token)
     db_write.add(reset_token)
     await db_write.commit()
 
-    reset_link = f"{settings.FRONTEND_BASE_URL}/password-reset/{token}/"
+    reset_link = f"{settings.FRONTEND_BASE_URL}/ресет-на-парола/{quote(cyrillic_token)}/"
 
     html_content = render_email(
-        "customers/password_reset.html",
+        "/customers/emails/password_reset.html",
         {
             "first_name": user.first_name,
             "reset_url": reset_link,
@@ -350,9 +367,12 @@ async def password_reset_confirm(
     data: PasswordResetConfirm,
     db_write: AsyncSession = Depends(get_write_session),
 ):
+    token_cyrillic = unquote(data.token)
+    raw_token = from_cyrillic_alphabet(token_cyrillic)
+
     try:
         email = serializer.loads(
-            data.token,
+            raw_token,
             salt="password-reset-salt",
             max_age=settings.RESET_TOKEN_EXPIRE_SECONDS,
         )
@@ -361,7 +381,7 @@ async def password_reset_confirm(
 
     result = await db_write.execute(
         select(PasswordResetToken).where(
-            (PasswordResetToken.token == data.token) & (~PasswordResetToken.used)
+            (PasswordResetToken.token == token_cyrillic) & (~PasswordResetToken.used)
         )
     )
     reset_token = result.scalars().first()
@@ -371,9 +391,7 @@ async def password_reset_confirm(
     result = await db_write.execute(select(User).filter(User.email == email))
     user = result.scalars().first()
     if not user:
-        raise HTTPException(
-            status_code=404, detail="Акаунт с този имейл не съществува."
-        )
+        raise HTTPException(status_code=404, detail="Акаунт с този имейл не съществува.")
 
     if user.role != "customer":
         raise HTTPException(

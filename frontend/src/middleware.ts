@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
   const uniqueId = req.cookies.get("unique_id")?.value;
   const anonymousSessionId = req.cookies.get("anonymous_session_id")?.value;
   const pathname = req.nextUrl.pathname;
+  const isProd = process.env.NODE_ENV === "production";
 
   const isApiRoute = pathname.startsWith("/api/");
   const isAuthPage = authPages.includes(pathname);

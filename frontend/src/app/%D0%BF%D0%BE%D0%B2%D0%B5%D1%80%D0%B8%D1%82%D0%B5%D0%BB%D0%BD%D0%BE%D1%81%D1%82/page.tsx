@@ -66,10 +66,10 @@ export default function PrivacyPolicy() {
               <>
                 Можете по всяко време да поискате достъп до, корекция или изтриване на вашите лични данни, като се свържете с нас на:{" "}
                 <a
-                  href="mailto:support@moyatapokana.bg"
+                  href="mailto:поддръжка@моятапокана.бг"
                   style={{ color: "var(--color-highlight-1)", textDecoration: "underline" }}
                 >
-                  support@moyatapokana.bg
+                  поддръжка@моятапокана.бг
                 </a>
               </>,
           },
@@ -151,10 +151,10 @@ export default function PrivacyPolicy() {
               <>
                 You may at any time request access to, correction, or deletion of your personal data by contacting us at:{" "}
                 <a
-                  href="mailto:support@moyatapokana.bg"
+                  href="mailto:поддръжка@моятапокана.бг"
                   style={{ color: "var(--color-highlight-1)", textDecoration: "underline" }}
                 >
-                  support@moyatapokana.bg
+                  поддръжка@моятапокана.бг
                 </a>
               </>,
           },

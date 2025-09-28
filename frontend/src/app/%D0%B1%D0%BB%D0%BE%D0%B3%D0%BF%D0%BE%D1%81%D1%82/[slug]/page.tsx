@@ -49,7 +49,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Open Graph */}
         <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
         <meta property="og:title" content={title} />
         {description && <meta property="og:description" content={description} />}
         <meta property="og:url" content={url} />

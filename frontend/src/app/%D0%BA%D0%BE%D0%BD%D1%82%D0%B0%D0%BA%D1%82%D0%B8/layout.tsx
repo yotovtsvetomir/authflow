@@ -6,9 +6,9 @@ import styles from './Contact.module.css';
 const CONTACT_URL = `${process.env.NEXT_PUBLIC_CLIENT_URL}/contact`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Свържете се с нас - Moyatapokana.bg";
+  const title = "Свържете се с нас - МоятаПокана.бг";
   const description =
-    "Свържете се с нас за въпроси или запитвания. Имейл, офис адрес и работно време на Moyatapokana.bg.";
+    "Свържете се с нас за въпроси или запитвания. Имейл, офис адрес и работно време на МоятаПокана.бг";
 
   return {
     title,
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       type: "website",
       url: CONTACT_URL,
-      siteName: "Moyatapokana.bg",
+      siteName: "МоятаПокана.бг",
     },
     twitter: {
       card: "summary_large_image",
@@ -40,12 +40,12 @@ export default function ContactLayout({ children }: Props) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Moyatapokana.bg",
+    name: "МоятаПокана.бг",
     url: process.env.NEXT_PUBLIC_CLIENT_URL,
     logo: `${process.env.NEXT_PUBLIC_CLIENT_URL}/logo.png`,
     contactPoint: {
       "@type": "ContactPoint",
-      email: "support@moyatapokana.bg",
+      email: "support@МоятаПокана.бг",
       contactType: "Customer Support",
       areaServed: "BG",
       availableLanguage: "BG",

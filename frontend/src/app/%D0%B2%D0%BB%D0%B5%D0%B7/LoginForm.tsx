@@ -122,10 +122,10 @@ export default function Login() {
               <div className={styles.buttonSecondaryGroup}>
                 <p>Като продължите, вие се съгласявате с нашите <TextLink href="/privacy" color="accent">Условия</TextLink> и <TextLink href="/privacy" color="accent">Политика за поверителност</TextLink>.</p>
                 <p>
-                  Нямате акаунт? <TextLink href="/register" color="accent">Регистрирайте се</TextLink>.
+                  Нямате акаунт? <TextLink href="/регистрация" color="accent">Регистрирайте се</TextLink>.
                 </p>
                 <p>
-                  Забравена парола? <TextLink href="/password-reset/request/" color="accent">Натиснете тук</TextLink>.
+                  Забравена парола? <TextLink href="/ресет-на-парола/запитване/" color="accent">Натиснете тук</TextLink>.
                 </p>
               </div>
 

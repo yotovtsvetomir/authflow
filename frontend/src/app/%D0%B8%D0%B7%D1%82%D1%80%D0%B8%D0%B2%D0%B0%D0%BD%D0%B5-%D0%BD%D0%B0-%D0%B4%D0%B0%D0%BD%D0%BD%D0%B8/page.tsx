@@ -35,13 +35,13 @@ export default function DataDeletionPage() {
           }}
         >
           <a
-            href="mailto:support@moyatapokana.bg"
+            href="mailto:support@моятапокана.бг"
             style={{
               color: "var(--color-highlight-1)",
               textDecoration: "underline",
             }}
           >
-            support@moyatapokana.bg
+            поддръжка@моятапокана.бг
           </a>
         </p>
         <p style={{ fontSize: "var(--font-md)", color: "var(--color-dark-400)" }}>
@@ -78,13 +78,13 @@ export default function DataDeletionPage() {
           }}
         >
           <a
-            href="mailto:support@moyatapokana.bg"
+            href="mailto:поддръжка@моятапокана.бг"
             style={{
               color: "var(--color-highlight-1)",
               textDecoration: "underline",
             }}
           >
-            support@moyatapokana.bg
+            поддръжка@моятапокана.бг
           </a>
         </p>
         <p style={{ fontSize: "var(--font-md)", color: "var(--color-dark-400)" }}>

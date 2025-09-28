@@ -1,8 +1,8 @@
 User-agent: *
 Disallow: /admin
-Disallow: /login
-Disallow: /register
-Disallow: /invitations
+Disallow: /логин
+Disallow: /регистрация
+Disallow: /покани
 Allow: /
 
-Sitemap: https://www.moyatapokana.bg/sitemap.xml
+Sitemap: https://моятапокана.бг/sitemap.xml

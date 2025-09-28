@@ -74,10 +74,10 @@ export default function MobileMenu({
               animate={footControls}
             >
               <motion.div className={styles.account} variants={midItemVariants}>
-                <Link href="/login" onClick={onClose}>
+                <Link href="/влез" onClick={onClose}>
                   <Button size="large" variant="secondary">Вход</Button>
                 </Link>
-                <Link href="/register" onClick={onClose}>
+                <Link href="/регистрация" onClick={onClose}>
                   <Button size="large" variant="secondary">Регистрация</Button>
                 </Link>
               </motion.div>

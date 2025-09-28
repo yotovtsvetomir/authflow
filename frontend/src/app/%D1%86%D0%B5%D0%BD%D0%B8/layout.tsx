@@ -25,7 +25,7 @@ export default async function PricingLayout({ children }: Props) {
     return <p>Ценовите пакети не са налични в момента.</p>;
   }
 
-  const title = "Цени - Moyatapokana.bg";
+  const title = "Цени - МоятаПокана.бг";
   const description = "Разгледайте нашите ценови пакети за покани и услуги. Изберете най-подходящия за вас.";
   const url = `${process.env.NEXT_PUBLIC_CLIENT_URL}/pricing`;
 
@@ -33,7 +33,7 @@ export default async function PricingLayout({ children }: Props) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: "Ценови пакети - Moyatapokana.bg",
+    name: "Ценови пакети - МоятаПокана.бг",
     description: "Изберете най-подходящия ценови пакет за вашите покани и услуги.",
     offers: data.tiers.map((tier) => ({
       "@type": "Offer",
@@ -53,7 +53,7 @@ export default async function PricingLayout({ children }: Props) {
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />

@@ -172,7 +172,7 @@ export default function RegisterPage() {
                   <TextLink href="/privacy">Политика за поверителност</TextLink>.
                 </p>
                 <p>
-                  Вече имате акаунт? <TextLink href="/login">Влезте от тук</TextLink>.
+                  Вече имате акаунт? <TextLink href="/влез">Влезте от тук</TextLink>.
                 </p>
               </div>
             </form>

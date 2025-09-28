@@ -31,7 +31,7 @@ export default async function PreviewTemplateLayout({ children, params }: Props)
     description: template.description,
     image: template.wallpaper,
     url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/template/preview/${pm.slug}`,
-    author: { "@type": "Organization", name: "moyatapokana.bg" },
+    author: { "@type": "Organization", name: "МоятаПокана.бг" },
   };
 
   return (
@@ -46,7 +46,7 @@ export default async function PreviewTemplateLayout({ children, params }: Props)
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`${process.env.NEXT_PUBLIC_CLIENT_URL}/template/preview/${pm.slug}`} />
         {template.wallpaper && <meta property="og:image" content={template.wallpaper} />}
-        <meta property="og:site_name" content="moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />

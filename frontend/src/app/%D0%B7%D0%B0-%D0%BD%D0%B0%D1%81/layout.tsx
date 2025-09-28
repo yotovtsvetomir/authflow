@@ -2,11 +2,10 @@ import Script from "next/script";
 import styles from './About.module.css';
 
 export default function AboutLayout({ children }: { children?: React.ReactNode }) {
-  // Optional structured data for About / Organization
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Moyatapokana.bg",
+    name: "МоятаПокана.бг",
     url: process.env.NEXT_PUBLIC_CLIENT_URL,
     logo: `${process.env.NEXT_PUBLIC_CLIENT_URL}/logo.png`,
     description: "Нашата цел е да направим организирането на събития лесно, стилно и незабравимо.",
@@ -19,23 +18,23 @@ export default function AboutLayout({ children }: { children?: React.ReactNode }
   return (
     <>
       <head>
-        <title>За нас - Moyatapokana.bg</title>
+        <title>За нас - МоятаПокана.бг</title>
         <meta
           name="description"
-          content="Научете повече за Moyatapokana.bg – нашата мисия, визия и ценности за създаване на красиви и стилни покани."
+          content="Научете повече за МоятаПокана.бг – нашата мисия, визия и ценности за създаване на красиви и стилни покани."
         />
 
         {/* Open Graph */}
-        <meta property="og:title" content="За нас - Moyatapokana.bg" />
-        <meta property="og:description" content="Научете повече за Moyatapokana.bg – нашата мисия, визия и ценности за създаване на красиви и стилни покани." />
+        <meta property="og:title" content="За нас - МоятаПокана.бг" />
+        <meta property="og:description" content="Научете повече за МоятаПокана.бг – нашата мисия, визия и ценности за създаване на красиви и стилни покани." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${process.env.NEXT_PUBLIC_CLIENT_URL}/about`} />
-        <meta property="og:site_name" content="Moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="За нас - Moyatapokana.bg" />
-        <meta name="twitter:description" content="Научете повече за Moyatapokana.bg – нашата мисия, визия и ценности за създаване на красиви и стилни покани." />
+        <meta name="twitter:title" content="За нас - МоятаПокана.бг" />
+        <meta name="twitter:description" content="Научете повече за МоятаПокана.бг – нашата мисия, визия и ценности за създаване на красиви и стилни покани." />
       </head>
 
       {/* JSON-LD */}
@@ -82,18 +81,6 @@ export default function AboutLayout({ children }: { children?: React.ReactNode }
               Да предоставим възможността на всеки да създава красиви и интересни покани.
             </p>
           </div>
-
-          {/* Values / Promise */}
-          <div className={styles.block}>
-            <div className={styles.blockHeader}>
-              <span className="material-symbols-outlined">shield</span>
-              <h2 className={styles.blockTitle}>Ценности</h2>
-            </div>
-            <p className={styles.text}>
-              Стремим се към простота, красота и полезност. Вярваме, че със здрав труд всичко е възможно.
-            </p>
-          </div>
-
           {children}
         </div>
       </div>

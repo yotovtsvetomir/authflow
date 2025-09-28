@@ -93,7 +93,7 @@ export default async function Page() {
               description: t.description || "Цифрова покана",
               brand: {
                 "@type": "Organization",
-                name: "Moyatapokana.bg",
+                name: "МоятаПокана.бг",
                 url: process.env.NEXT_PUBLIC_CLIENT_URL,
               },
               offers: {
@@ -137,7 +137,7 @@ export default async function Page() {
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />

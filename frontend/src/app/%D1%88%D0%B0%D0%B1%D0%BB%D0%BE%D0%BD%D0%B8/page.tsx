@@ -87,8 +87,8 @@ export default async function TemplatesPage({ searchParams }: Props) {
         description: t.description || "Цифрова покана",
         brand: {
           "@type": "Organization",
-          name: "Moyatapokana.bg",
-          url: "https://www.moyatapokana.bg"
+          name: "МоятаПокана.бг",
+          url: "https://моятапокана.бг"
         },
         offers: {
           "@type": "Offer",

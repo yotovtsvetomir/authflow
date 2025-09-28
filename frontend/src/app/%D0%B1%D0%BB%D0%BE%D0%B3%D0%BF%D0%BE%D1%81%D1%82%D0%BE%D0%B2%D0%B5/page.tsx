@@ -52,7 +52,7 @@ export default async function BlogPostsPage() {
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="https://www.moyatapokana.bg" />
+        <meta property="og:site_name" content="МоятаПокана.бг" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />

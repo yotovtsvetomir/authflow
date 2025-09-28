@@ -55,7 +55,7 @@ export default function ResetPassword() {
 
       if (response.ok) {
         setMessage('Паролата е сменена успешно.');
-        setTimeout(() => router.push('/login'), 3000);
+        setTimeout(() => router.push('/влез'), 3000);
       } else {
         let errorMessage = 'Невалиден токен или потребител.';
 
