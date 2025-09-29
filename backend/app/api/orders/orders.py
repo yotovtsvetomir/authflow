@@ -585,7 +585,6 @@ async def generate_invoice(
     order_data = format_order_dates(order)
 
     # --- VAT logic ---
-    # --- VAT logic ---
     total_price = order.total_price or Decimal("0.00")
     original_price = order.original_price or Decimal("0.00")
 
@@ -593,7 +592,6 @@ async def generate_invoice(
         price_without_vat = total_price / Decimal("1.2")
         vat_amount = total_price - price_without_vat
     else:
-        # if fully discounted, show original price but no VAT
         price_without_vat = original_price
         vat_amount = Decimal("0.00")
 

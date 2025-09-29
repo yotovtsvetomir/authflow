@@ -71,7 +71,7 @@
             <td>{{ tpl.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
             <td>
                 <a href="/admin/templates/{{ tpl.id }}/edit" class="btn">Редактирай</a>
-                <a href="http://localhost:3000/templates/preview/{{ tpl.slug }}" class="btn" target="_blank">Преглед</a>
+                <a href="http://localhost:3000/шаблон/преглед/{{ tpl.slug }}" class="btn" target="_blank">Преглед</a>
                 <form action="/admin/templates/{{ tpl.id }}/delete" method="post" style="display:inline;">
                     <button type="submit" onclick="return confirm('Сигурни ли сте, че искате да изтриете този шаблон?');">Изтрий</button>
                 </form>

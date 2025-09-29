@@ -109,7 +109,7 @@ export default function BalloonGame() {
 
   const handlePop = (id: string) => {
     popSound.current?.play();
-    if (progressSound.current && popped + 1 < POP_TARGET) progressSound.current.play();
+    // if (progressSound.current && popped + 1 < POP_TARGET) progressSound.current.play();
 
     setBalloons((prev) =>
       prev.map((b) => {
