@@ -53,7 +53,7 @@ export default function CTA() {
               <Button
                 variant="secondary"
                 size={isMobile ? "small" : "large"}
-                onClick={() => router.push("/шаблони")}
+                onClick={() => router.push("/templates")}
                 icon="format_list_bulleted"
                 iconPosition="left"
               >
@@ -63,7 +63,7 @@ export default function CTA() {
               <Button
                 variant="primary"
                 size={isMobile ? "small" : "large"}
-                onClick={() => router.push("/покани/създай")}
+                onClick={() => router.push("/invitations/create")}
                 icon="drafts"
                 iconPosition="left"
               >

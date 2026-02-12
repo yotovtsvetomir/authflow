@@ -37,7 +37,7 @@ def process_name(name: str) -> str:
 @router.post("/google-login")
 async def google_login(
     payload: GoogleLoginPayload,
-    request: Request,  # <-- add this
+    request: Request,
     db_read: AsyncSession = Depends(get_read_session),
     db_write: AsyncSession = Depends(get_write_session),
 ):

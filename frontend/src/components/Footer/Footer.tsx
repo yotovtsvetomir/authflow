@@ -30,12 +30,12 @@ export default function Footer() {
             {/* Navigation links */}
             <div className={styles.linksWrapper}>
               <nav className={styles.links} aria-label="Footer navigation">
-                <TextLink color="muted" href="/за-нас">За нас</TextLink>
-                <TextLink color="muted" href="/инициативи">Инициативи</TextLink>
-                <TextLink color="muted" href="/контакти">Контакти</TextLink>
-                <TextLink color="muted" href="/поверителност">Поверителност</TextLink>
-                <TextLink color="muted" href="/изтриване-на-данни">Изтриване на данни</TextLink>
-                <TextLink color="muted" href="/бисквитки">Бисквитки</TextLink>
+                <TextLink color="muted" href="/about">За нас</TextLink>
+                <TextLink color="muted" href="/initiatives">Инициативи</TextLink>
+                <TextLink color="muted" href="/contact">Контакти</TextLink>
+                <TextLink color="muted" href="/privacy">Поверителност</TextLink>
+                <TextLink color="muted" href="/data-deletion">Изтриване на данни</TextLink>
+                <TextLink color="muted" href="/cookies">Бисквитки</TextLink>
               </nav>
             </div>
 
@@ -43,7 +43,7 @@ export default function Footer() {
             <div className={styles.social}>
               <a
                 className={styles.socialIcon}
-                href="https://instagram.com/моятапокана.бг"
+                href="https://instagram.com/moyatapokana.bg"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -52,7 +52,7 @@ export default function Footer() {
               </a>
               <a
                 className={styles.socialIcon}
-                href="https://facebook.com/моятапокана.бг"
+                href="https://facebook.com/moyatapokana.bg"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"

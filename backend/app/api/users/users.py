@@ -299,20 +299,6 @@ async def refresh_session(
 
 
 BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-CYRILLIC_ALPHABET = (
-    "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-    "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮ"
-)
-
-to_map = dict(zip(BASE64_ALPHABET, CYRILLIC_ALPHABET))
-from_map = {v: k for k, v in to_map.items()}
-
-def to_cyrillic_alphabet(token: str) -> str:
-    return "".join(to_map.get(ch, ch) for ch in token)
-
-def from_cyrillic_alphabet(encoded: str) -> str:
-    return "".join(from_map.get(ch, ch) for ch in encoded)
-
 
 # ------------------------------
 # Password reset
@@ -335,13 +321,13 @@ async def password_reset_request(
             status_code=403, detail="Нямате разрешение да извършите това действие."
         )
 
+    # Keep token in Base64 / Latin letters only
     raw_token = serializer.dumps(user.email, salt="password-reset-salt")
-    cyrillic_token = to_cyrillic_alphabet(raw_token)
-    reset_token = PasswordResetToken(user_id=user.id, token=cyrillic_token)
+    reset_token = PasswordResetToken(user_id=user.id, token=raw_token)
     db_write.add(reset_token)
     await db_write.commit()
 
-    reset_link = f"{settings.FRONTEND_BASE_URL}/ресет-на-парола/{quote(cyrillic_token)}/"
+    reset_link = f"{settings.FRONTEND_BASE_URL}/ресет-на-парола/{quote(raw_token)}/"
 
     html_content = render_email(
         "/customers/emails/password_reset.html",
@@ -367,8 +353,8 @@ async def password_reset_confirm(
     data: PasswordResetConfirm,
     db_write: AsyncSession = Depends(get_write_session),
 ):
-    token_cyrillic = unquote(data.token)
-    raw_token = from_cyrillic_alphabet(token_cyrillic)
+    # Token stays in Latin/Base64, no Cyrillic conversion needed
+    raw_token = unquote(data.token)
 
     try:
         email = serializer.loads(
@@ -381,7 +367,7 @@ async def password_reset_confirm(
 
     result = await db_write.execute(
         select(PasswordResetToken).where(
-            (PasswordResetToken.token == token_cyrillic) & (~PasswordResetToken.used)
+            (PasswordResetToken.token == raw_token) & (~PasswordResetToken.used)
         )
     )
     reset_token = result.scalars().first()

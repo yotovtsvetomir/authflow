@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/профил"];
-const authPages = ["/влез", "/регистрация", "/ресет-на-парола/запитване"];
+const protectedRoutes = ["/profile"];
+const authPages = ["/login", "/logout", "/password-reset/request"];
 
 export async function middleware(req: NextRequest) {
   const sessionId = req.cookies.get("session_id")?.value;
@@ -29,12 +29,12 @@ export async function middleware(req: NextRequest) {
 
   // Logged in → block auth pages
   if (sessionId && isAuthPage) {
-    return NextResponse.redirect(new URL("/профил", req.url));
+    return NextResponse.redirect(new URL("/profile", req.url));
   }
 
   // Not logged in → block protected pages
   if (!sessionId && isProtectedPage) {
-    return NextResponse.redirect(new URL("/влез", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Ensure `unique_id` exists

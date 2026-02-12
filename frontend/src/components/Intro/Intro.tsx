@@ -54,7 +54,7 @@ function TemplateSlide({ template }: { template: TemplateRead }) {
           width="100%"
           icon="visibility"
           iconPosition="right"
-          href={`/шаблон/преглед/${template.slug}`}
+          href={`/template/preview/${template.slug}`}
         >
           Визуализирай
         </Button>
@@ -98,7 +98,7 @@ export default function Intro({ templates }: IntroProps) {
           </div>
 
           <div className={styles.carouselFooter}>
-            <Button href="/шаблони" variant="secondary" size={isMobile ? "small" : "large"}>
+            <Button href="/templates" variant="secondary" size={isMobile ? "small" : "large"}>
               Разгледай
             </Button>
           </div>

@@ -1,4 +1,8 @@
 !!!! If models are a new file make sure to include them in alembic/env.py before running migrations !!!!
 
+* ps if db is wiped out or new, move the alembic/versions/* to backup and run the commands afterwards
+
+* docker exec -it moyatapokana-db_writer-1 psql -U postgres -d app_db
+
 docker exec -it moyatapokana-backend-1 alembic revision --autogenerate -m "latest migration"
 docker exec -it moyatapokana-backend-1 alembic upgrade head

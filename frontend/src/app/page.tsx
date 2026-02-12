@@ -88,7 +88,7 @@ export default async function Page() {
             item: {
               "@type": "Product",
               name: t.title,
-              url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/шаблон/преглед/${t.slug}`,
+              url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/template/preview/${t.slug}`,
               image: t.wallpaper,
               description: t.description || "Цифрова покана",
               brand: {

@@ -3,7 +3,7 @@ services:
   # PostgreSQL Cluster
   # -----------------------------
   db_writer:
-    image: bitnami/postgresql:15
+    image: bitnami/postgresql:latest
     environment:
       POSTGRESQL_USERNAME: postgres
       POSTGRESQL_PASSWORD: postgres
@@ -17,7 +17,7 @@ services:
       - cluster_net
 
   db_reader:
-    image: bitnami/postgresql:15
+    image: bitnami/postgresql:latest
     depends_on:
       - db_writer
     environment:

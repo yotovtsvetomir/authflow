@@ -34,7 +34,7 @@ export default function SearchOverlay({ open, onClose, headerRef }: SearchOverla
   const handleSearchSubmit = (e?: FormEvent) => {
     e?.preventDefault();
     if (!searchTerm.trim()) return;
-    router.push(`/шаблони/?търсене=${encodeURIComponent(searchTerm.trim())}`);
+    router.push(`/templates/?search=${encodeURIComponent(searchTerm.trim())}`);
     onClose();
   };
 
@@ -84,7 +84,7 @@ export default function SearchOverlay({ open, onClose, headerRef }: SearchOverla
                 className={styles.example}
                 onClick={() => {
                   setSearchTerm(term);
-                  router.push(`/шаблони/?търсене=${encodeURIComponent(term)}`);
+                  router.push(`/templates/?search=${encodeURIComponent(term)}`);
                   onClose();
                 }}
               >

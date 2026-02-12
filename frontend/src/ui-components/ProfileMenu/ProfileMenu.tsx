@@ -96,9 +96,9 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
 
             <div className={styles.dropdownInner}>
               <Link
-                key="/профил/покани"
-                href="/профил/покани"
-                className={`${styles.dropdownItem} ${pathname === '/профил/покани' ? styles.selected : ''}`}
+                key="/profile/invitations"
+                href="/profile/invitations"
+                className={`${styles.dropdownItem} ${pathname === '/profile/invitations' ? styles.selected : ''}`}
                 onClick={onClose}
               >
                 <span className="material-symbols-outlined">mail</span>
@@ -106,9 +106,9 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
               </Link>
 
               <Link
-                key="/профил/поръчки"
-                href="/профил/поръчки"
-                className={`${styles.dropdownItem} ${pathname === '/профил/поръчки' ? styles.selected : ''}`}
+                key="/profile/orders"
+                href="/profile/orders"
+                className={`${styles.dropdownItem} ${pathname === '/profile/orders' ? styles.selected : ''}`}
                 onClick={onClose}
               >
                 <span className="material-symbols-outlined">shopping_cart</span>
@@ -116,9 +116,9 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
               </Link>
 
               <Link
-                key="/профил/инфо"
-                href="/профил/инфо"
-                className={`${styles.dropdownItem} ${pathname === '/профил/инфо' ? styles.selected : ''}`}
+                key="/profile/info"
+                href="/profile/info"
+                className={`${styles.dropdownItem} ${pathname === '/profile/info' ? styles.selected : ''}`}
                 onClick={onClose}
               >
                 <span className="material-symbols-outlined">manage_accounts</span>
@@ -126,8 +126,8 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
               </Link>
 
               <Link 
-                key='/профил/излез'
-                href='/профил/излез'
+                key='/profile/logout'
+                href='/profile/logout'
                 className={`${styles.dropdownItem} ${styles.logout}`}
                 onClick={onClose}
               >

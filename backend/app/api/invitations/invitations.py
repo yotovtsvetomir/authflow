@@ -485,10 +485,10 @@ async def list_templates(
     db: AsyncSession = Depends(get_read_session),
     page: int = Query(1, ge=1),
     page_size: int = Query(7, ge=1, le=100),
-    търсене: Optional[str] = Query(None),
-    категория: Optional[str] = Query(None),
-    подкатегория: Optional[str] = Query(None),
-    вариант: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    subcategory: Optional[str] = Query(None),
+    variant: Optional[str] = Query(None),
     ordering: str = Query("-created_at"),
 ):
     """List templates with filters, only released, using slugs for categories/subcategories/variants."""
@@ -496,20 +496,20 @@ async def list_templates(
     filters = [Template.is_released.is_(True)]
 
     # --- Resolve slugs to IDs ---
-    if категория:
-        filters.append(Template.category.has(name=deslugifycats(категория)))
+    if category:
+        filters.append(Template.category.has(name=deslugifycats(category)))
 
-    if подкатегория:
-        filters.append(Template.subcategory.has(name=deslugifycats(подкатегория)))
+    if subcategory:
+        filters.append(Template.subcategory.has(name=deslugifycats(subcategory)))
 
-    if вариант:
-        filters.append(Template.subcategory_variant.has(name=deslugifycats(вариант)))
+    if variant:
+        filters.append(Template.subcategory_variant.has(name=deslugifycats(variant)))
 
     # --- Apply search + ordering ---
     filters, order_by = await apply_filters_search_ordering(
         model=Template,
         db=db,
-        search=търсене,
+        search=search,
         search_columns=[Template.title, Template.description],
         filters=filters,
         ordering=ordering,

@@ -25,18 +25,13 @@ export function useRegister() {
 
   const validate = () => {
     const newErrors: RegisterFormErrors = {};
-    const cyrillicRegex = /^[\u0400-\u04FF\s-]+$/; // Cyrillic letters, spaces, hyphens
 
     if (!values.first_name || values.first_name.length < 2) {
       newErrors.first_name = "Името трябва да е поне 2 символа";
-    } else if (!cyrillicRegex.test(values.first_name)) {
-      newErrors.first_name = "Името трябва да съдържа само кирилица";
     }
 
     if (!values.last_name || values.last_name.length < 2) {
       newErrors.last_name = "Фамилията трябва да е поне 2 символа";
-    } else if (!cyrillicRegex.test(values.last_name)) {
-      newErrors.last_name = "Фамилията трябва да съдържа само кирилица";
     }
 
     if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
@@ -99,7 +94,7 @@ export function useRegister() {
       }
 
       setSuccess(true);
-      window.location.href = "/профил";
+      window.location.href = "/profile";
     } catch (error) {
       setErrors({
         apiError: error instanceof Error ? error.message : "Сървърна грешка",
