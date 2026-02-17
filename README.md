@@ -284,8 +284,9 @@ Example fetch flow with auth and Redis shared cache:
 | **Populating Data**        | Avoid syncing production data to staging — it leads to data corruption, privacy risks, and maintenance nightmares. Instead, use realistic dummy data tailored for safe testing. |
 
 
+
+
 | **Git Branch** | **Trigger**        | **CI/CD Action**                         | **Environment**        | **Purpose**                                                     |
 | -------------- | ------------------ | ---------------------------------------- | ---------------------- | --------------------------------------------------------------- |
 | `staging`      | `git push staging` | Run tests → Build → Deploy to staging    | Staging environment    | Continuous integration & testing; preview for QA/devs/reviewers |
 | `master`       | `git push master`  | Run tests → Build → Deploy to production | Production environment | Final release after staging approval; live app for users        |
-# authflow
