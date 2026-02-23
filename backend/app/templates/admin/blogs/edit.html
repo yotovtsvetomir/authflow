@@ -74,7 +74,27 @@
 
     button:hover {
         background-color: #0097e6;
-        transform: translateY(-1px);
+    }
+
+    a {
+        margin-bottom: 20px;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        width: 30%;
+        padding: 12px 0;
+        background-color: #00a8ff;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    a:hover {
+        background-color: #0097e6;
     }
 
     /* Image preview */
@@ -92,43 +112,45 @@
     }
 </style>
 
-<h1>Редактирай блог пост: {{ post.title }}</h1>
+<h1>Edit Blog Post: {{ post.title }}</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
+    <a href="/admin/blogs/">Back</a>
+
     <div>
-        <label for="title">Заглавие</label>
+        <label for="title">Title</label>
         <input type="text" name="title" value="{{ post.title }}" required>
     </div>
 
     <div>
-        <label for="authored_by">Автор</label>
+        <label for="authored_by">Author</label>
         <input type="text" name="authored_by" value="{{ post.authored_by or '' }}">
     </div>
 
     <div>
-        <label for="paragraphs">Параграфи (по един на ред)</label>
+        <label for="paragraphs">Paragraphs (one per line)</label>
         <textarea name="paragraphs" rows="5" required>{% for p in post.paragraphs %}{{ p }}
 {% endfor %}</textarea>
     </div>
 
     <div>
-        <label>Съществуващо изображение</label>
+        <label>Existing Image</label>
         <div class="image-preview">
             {% if post.image %}
                 <img src="{{ post.image }}" alt="Blog Image">
             {% else %}
-                <p>Няма качено изображение</p>
+                <p>No image uploaded</p>
             {% endif %}
         </div>
     </div>
 
     <div>
-        <label for="image">Смени изображение</label>
+        <label for="image">Replace Image</label>
         <input type="file" name="image" accept="image/*">
         <div class="image-preview" id="newImagePreview"></div>
     </div>
 
-    <button type="submit">Обнови поста</button>
+    <button type="submit">Update Post</button>
 </form>
 
 <script>

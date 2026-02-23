@@ -1,0 +1,10 @@
+.description {
+	font-size: var(--font-lg);
+	margin-bottom: 0.5rem;
+}
+
+.actions {
+	margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+}

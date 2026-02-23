@@ -20,13 +20,13 @@ export default function ResetPassword() {
   function validate() {
     const errs: { newPassword?: string; confirmPassword?: string } = {};
     if (!newPassword) {
-      errs.newPassword = 'Моля, въведете нова парола';
+      errs.newPassword = 'Please enter a new password';
     }
     if (!confirmPassword) {
-      errs.confirmPassword = 'Моля, потвърдете паролата';
+      errs.confirmPassword = 'Please confirm the password';
     }
     if (newPassword && confirmPassword && newPassword !== confirmPassword) {
-      errs.confirmPassword = 'Паролите не съвпадат';
+      errs.confirmPassword = 'Passwords do not match';
     }
     return errs;
   }
@@ -54,10 +54,10 @@ export default function ResetPassword() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Паролата е сменена успешно.');
+        setMessage('Password has been successfully changed.');
         setTimeout(() => router.push('/login'), 3000);
       } else {
-        let errorMessage = 'Невалиден токен или потребител.';
+        let errorMessage = 'Invalid token or user.';
 
         if (Array.isArray(data)) {
           errorMessage = data.map((err) => err.msg).join(', ');
@@ -69,20 +69,20 @@ export default function ResetPassword() {
       }
     } catch (err) {
       console.error('Reset error:', err);
-      setErrors({ apiError: 'Възникна грешка. Моля, опитайте по-късно.' });
+      setErrors({ apiError: 'An error occurred. Please try again later.' });
     }
   };
 
   return (
     <div className="container fullHeight">
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
-        <h2 className={styles.heading}>Смени парола</h2>
+        <h2 className={styles.heading}>Change Password</h2>
 
         <Input
           id="newPassword"
           name="newPassword"
           type="password"
-          label="Нова парола"
+          label="New Password"
           value={newPassword}
           error={errors.newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
@@ -92,14 +92,14 @@ export default function ResetPassword() {
           id="confirmPassword"
           name="confirmPassword"
           type="password"
-          label="Потвърди паролата"
+          label="Confirm Password"
           value={confirmPassword}
           error={errors.confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
         <Button type="submit" width="100%" disabled={isSubmitting}>
-          {isSubmitting ? 'Изпратени' : 'Смени паролата'}
+          {isSubmitting ? 'Submitted' : 'Change Password'}
         </Button>
 
         {message && <p className={`${styles.message} ${styles.success}`}>{message}</p>}

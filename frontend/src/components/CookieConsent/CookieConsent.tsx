@@ -25,11 +25,11 @@ const CookieConsent: React.FC = () => {
       <div className="container">
         <div className={styles.content}>
           <span>
-            Използваме бисквитки, за да подобрим Вашето преживяване на сайта.{' '}
-            <a href="/privacy" className={styles.link}>Научи повече</a>
+            We use cookies to improve your experience on the site.{' '}
+            <a href="/privacy" className={styles.link}>Learn more</a>
           </span>
           <button className={styles.button} onClick={acceptCookies}>
-            Разбрах
+            Got it
           </button>
         </div>
       </div>

@@ -11,11 +11,12 @@ class UserCreate(BaseModel):
     password: str
     first_name: str
     last_name: str
+    redirect_to: Optional[str] = None
 
     @validator("password")
     def validate_password(cls, v):
         if len(v) < 8:
-            raise ValueError("Паролата трябва да е поне 5 символа")
+            raise ValueError("Password needs to be at least 5 characters.")
 
         return v
 
@@ -52,13 +53,13 @@ class PasswordResetConfirm(BaseModel):
     @validator("new_password")
     def validate_password(cls, v):
         if len(v) < 8:
-            raise ValueError("Паролата трябва да е поне 8 символа")
+            raise ValueError("The password must be at least 8 characters long")
         if not re.search(r"[A-Z]", v):
-            raise ValueError("Паролата трябва да съдържа поне една главна буква")
+            raise ValueError("The password must contain at least one uppercase letter")
         if not re.search(r"[a-z]", v):
-            raise ValueError("Паролата трябва да съдържа поне една малка буква")
+            raise ValueError("The password must contain at least one lowercase letter")
         if not re.search(r"\d", v):
-            raise ValueError("Паролата трябва да съдържа поне една цифра")
+            raise ValueError("The password must contain at least one digit")
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError("Паролата трябва да съдържа поне един специален символ")
+            raise ValueError("The password must contain at least one special character")
         return v

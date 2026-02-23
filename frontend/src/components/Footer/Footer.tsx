@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '@/assets/dark_logo.svg';
+import logo from '@/assets/dark_logo.png';
 import styles from './Footer.module.css';
 import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { TextLink } from '@/ui-components/TextLink/TextLink';
@@ -18,9 +18,9 @@ export default function Footer() {
               <Link href="/">
                 <Image
                   src={logo}
-                  alt="Моята Покана"
+                  alt="Logo"
                   className={styles.logo}
-                  width={120}
+                  width={50}
                   height={40}
                   priority
                 />
@@ -30,12 +30,9 @@ export default function Footer() {
             {/* Navigation links */}
             <div className={styles.linksWrapper}>
               <nav className={styles.links} aria-label="Footer navigation">
-                <TextLink color="muted" href="/about">За нас</TextLink>
-                <TextLink color="muted" href="/initiatives">Инициативи</TextLink>
-                <TextLink color="muted" href="/contact">Контакти</TextLink>
-                <TextLink color="muted" href="/privacy">Поверителност</TextLink>
-                <TextLink color="muted" href="/data-deletion">Изтриване на данни</TextLink>
-                <TextLink color="muted" href="/cookies">Бисквитки</TextLink>
+                <TextLink color="muted" href="/cookies">Cookies</TextLink>
+                <TextLink color="muted" href="/privacy">Privacy policy</TextLink>
+                <TextLink color="muted" href="/data-deletion">Data deletion</TextLink>
               </nav>
             </div>
 
@@ -43,7 +40,7 @@ export default function Footer() {
             <div className={styles.social}>
               <a
                 className={styles.socialIcon}
-                href="https://instagram.com/moyatapokana.bg"
+                href="https://instagram.com/authflow.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -52,7 +49,7 @@ export default function Footer() {
               </a>
               <a
                 className={styles.socialIcon}
-                href="https://facebook.com/moyatapokana.bg"
+                href="https://facebook.com/authflow.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -64,8 +61,7 @@ export default function Footer() {
 
           {/* Copyright at bottom */}
           <div className={styles.brandWrapper}>
-            <span className={styles.brand}>© Моята Покана</span>
-            <span className={`fi fi-bg ${styles.flag}`} title="България" aria-label="България" />
+            <span className={styles.brand}>© AuthFlow</span>
           </div>
         </div>
       </div>

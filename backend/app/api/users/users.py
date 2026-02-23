@@ -14,15 +14,14 @@ from fastapi import (
 from urllib.parse import quote, unquote
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func
+from sqlalchemy import func, update
 
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from app.core.permissions import require_role
 from app.core.settings import settings
 from app.db.session import get_read_session, get_write_session
-from app.db.models.invitation import Invitation, InvitationStatus
-from app.db.models.user import User, PasswordResetToken
+from app.db.models.user import User, PasswordResetToken, DailyUserStats
 from app.schemas.user import (
     UserRead,
     UserLogin,
@@ -72,7 +71,7 @@ async def register(
     db_write: AsyncSession = Depends(get_write_session),
 ):
     if not await check_email_mx(user_create.email):
-        raise HTTPException(status_code=400, detail="Имейлa е невалиден.")
+        raise HTTPException(status_code=400, detail="The email is invalid.")
 
     existing_user = (
         (await db_read.execute(select(User).where(User.email == user_create.email)))
@@ -82,46 +81,63 @@ async def register(
 
     if existing_user:
         raise HTTPException(
-            status_code=400, detail="Акаунт с този имейл вече съществува."
+            status_code=400, detail="An account with this email already exists."
         )
 
     user = await create_user(user_create, db_write)
-    session_id = await create_session(user)
-    expires_at = datetime.utcnow() + timedelta(seconds=settings.SESSION_EXPIRE_SECONDS)
 
-    # -------------------- Claim drafts before deleting anon session --------------------
-    if anonymous_session_id:
-        result_user_invites = await db_read.execute(
-            select(func.count(Invitation.id)).where(
-                Invitation.owner_id == user.id,
-                Invitation.status == InvitationStatus.DRAFT,
-            )
-        )
-        user_invite_count = result_user_invites.scalar() or 0
+    # -------------------- Send Confirmation Email --------------------
+    raw_token = serializer.dumps(user.email, salt="email-confirm-salt")
 
-        result_drafts = await db_read.execute(
-            select(Invitation).where(Invitation.anon_session_id == anonymous_session_id)
-        )
-        drafts = result_drafts.scalars().all()
+    # Include redirect_to as a query parameter if provided
+    redirect_param = f"&from={quote(user_create.redirect_to)}" if user_create.redirect_to else ""
+    confirmation_link = f"{settings.FRONTEND_BASE_URL}/confirm-email/{quote(raw_token)}/?{redirect_param}"
 
-        max_allowed = 3 - user_invite_count
-        drafts_to_transfer = drafts[:max_allowed] if max_allowed > 0 else []
+    html_content = render_email(
+        "customers/emails/email_confirmation.html",
+        {
+            "first_name": user.first_name or user.email,
+            "confirm_url": confirmation_link,
+            "logo_url": f"{settings.FRONTEND_BASE_URL}/logo.png",
+        },
+    )
 
-        for draft in drafts_to_transfer:
-            draft = await db_write.merge(draft)
-            draft.owner_id = user.id
-            draft.anon_session_id = None
+    send_email(
+        to=user.email,
+        subject="Confirm Your Email",
+        body=f"Hello {user.first_name or user.email}, please confirm your email: {confirmation_link}",
+        html=html_content,
+    )
 
-        if drafts_to_transfer:
-            await db_write.commit()
+    return {
+        "message": "Registration successful",
+    }
 
-        await delete_session(anonymous_session_id, anonymous=True)
+# ------------------------------
+# Confirm Email
+# ------------------------------
+@router.get("/confirm-email/{token}")
+async def confirm_email(token: str, db_write: AsyncSession = Depends(get_write_session)):
+    try:
+        email = serializer.loads(token, salt="email-confirm-salt", max_age=86400)
+    except SignatureExpired:
+        raise HTTPException(status_code=400, detail="Confirmation link expired")
+    except BadSignature:
+        raise HTTPException(status_code=400, detail="Invalid confirmation link")
 
-    # -------------------- Track unique user --------------------
-    unique_id = request.cookies.get("unique_id") or str(user.id)
-    await increment_daily_user_stat(unique_id, db_write)
+    result = await db_write.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    # -------------------- Send Welcome Email --------------------
+    if user.active:
+        return {"message": "Email already confirmed"}
+
+    user.active = True
+    db_write.add(user)
+    await db_write.commit()
+    await db_write.refresh(user)
+
     html_content = render_email(
         "customers/emails/welcome.html",
         {
@@ -134,18 +150,12 @@ async def register(
 
     send_email(
         to=user.email,
-        subject="Добре дошли в МоятаПокана",
-        body=f"Добре дошли, {user.first_name or user.email}!",
+        subject="Welcome to Authflow",
+        body=f"Welcome, {user.first_name or user.email}!",
         html=html_content,
     )
 
-    return {
-        "session_id": session_id,
-        "unique_id": unique_id,
-        "message": "Registration successful",
-        "expires_at": expires_at.isoformat() + "Z",
-    }
-
+    return {"message": "Email confirmed successfully"}
 
 # ------------------------------
 # Login
@@ -162,14 +172,20 @@ async def login(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Невалидно име или парола",
+            detail="Invalid username or password",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not user.active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please confirm your email before logging in."
         )
 
     if user.role != "customer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нямате разрешение да влезете в системата.",
+            detail="You do not have permission to log in.",
         )
 
     # Delete any anonymous session on login
@@ -204,7 +220,7 @@ async def get_me(
     result = await db_read.execute(select(User).filter(User.email == email))
     user = result.scalars().first()
     if not user:
-        raise HTTPException(status_code=401, detail="Нямате разрешение")
+        raise HTTPException(status_code=401, detail="You do not have permission")
     return user
 
 
@@ -272,7 +288,7 @@ async def logout(
     _=Depends(require_role("customer")),
 ):
     if not session_id:
-        raise HTTPException(status_code=401, detail="Няма намерена сесия")
+        raise HTTPException(status_code=401, detail="No session found")
 
     await delete_session(session_id)
     return
@@ -287,15 +303,15 @@ async def refresh_session(
     _=Depends(require_role("customer")),
 ):
     if not session_id:
-        raise HTTPException(status_code=401, detail="Няма намерена сесия")
+        raise HTTPException(status_code=401, detail="No session found")
 
     updated = await extend_session_expiry(session_id)
     if not updated:
         raise HTTPException(
-            status_code=401, detail="Грешка при обновяването на сесията"
+            status_code=401, detail="Error updating the session"
         )
 
-    return {"message": "Сесията е обновена", "session_id": session_id}
+    return {"message": "Session has been refreshed", "session_id": session_id}
 
 
 BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -313,12 +329,12 @@ async def password_reset_request(
     user = result.scalars().first()
     if not user:
         raise HTTPException(
-            status_code=404, detail="Акаунт с този имейл не съществува."
+            status_code=404, detail="An account with this email does not exist."
         )
 
     if user.role != "customer":
         raise HTTPException(
-            status_code=403, detail="Нямате разрешение да извършите това действие."
+            status_code=403, detail="You do not have permission to perform this action."
         )
 
     # Keep token in Base64 / Latin letters only
@@ -327,7 +343,7 @@ async def password_reset_request(
     db_write.add(reset_token)
     await db_write.commit()
 
-    reset_link = f"{settings.FRONTEND_BASE_URL}/ресет-на-парола/{quote(raw_token)}/"
+    reset_link = f"{settings.FRONTEND_BASE_URL}/password-reset/{quote(raw_token)}/"
 
     html_content = render_email(
         "/customers/emails/password_reset.html",
@@ -338,14 +354,14 @@ async def password_reset_request(
         },
     )
 
-    subject = "Ресет на парола"
+    subject = "Password Reset"
     plain_body = (
-        f"Здравейте {user.first_name or user.email},\n\n"
-        f"Натиснете линка за да смените паролата:\n{reset_link}"
+        f"Hello {user.first_name or user.email},\n\n"
+        f"Click the link to reset your password:\n{reset_link}"
     )
 
     send_email(to=user.email, subject=subject, body=plain_body, html=html_content)
-    return {"message": "Линк за смяна на паролата беше изпратен на имейла ви."}
+    return {"message": "A link to reset your password has been sent to your email."}
 
 
 @router.post("/password-reset/confirm")
@@ -353,7 +369,6 @@ async def password_reset_confirm(
     data: PasswordResetConfirm,
     db_write: AsyncSession = Depends(get_write_session),
 ):
-    # Token stays in Latin/Base64, no Cyrillic conversion needed
     raw_token = unquote(data.token)
 
     try:
@@ -363,7 +378,7 @@ async def password_reset_confirm(
             max_age=settings.RESET_TOKEN_EXPIRE_SECONDS,
         )
     except (SignatureExpired, BadSignature):
-        raise HTTPException(status_code=400, detail="Невалиден токен")
+        raise HTTPException(status_code=400, detail="Invalid token")
 
     result = await db_write.execute(
         select(PasswordResetToken).where(
@@ -372,24 +387,24 @@ async def password_reset_confirm(
     )
     reset_token = result.scalars().first()
     if not reset_token:
-        raise HTTPException(status_code=400, detail="Невалиден токен")
+        raise HTTPException(status_code=400, detail="Invalid token")
 
     result = await db_write.execute(select(User).filter(User.email == email))
     user = result.scalars().first()
     if not user:
-        raise HTTPException(status_code=404, detail="Акаунт с този имейл не съществува.")
+        raise HTTPException(status_code=404, detail="An account with this email does not exist.")
 
     if user.role != "customer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нямате разрешение да извършите това действие.",
+            detail="You do not have permission to perform this action.",
         )
 
     user.hashed_password = hash_password(data.new_password)
     reset_token.used = True
     await db_write.commit()
 
-    return {"message": "Паролата беше сменена успешно."}
+    return {"message": "Password has been successfully changed."}
 
 
 # ------------------------------
@@ -413,4 +428,39 @@ async def create_anon_session(
         "unique_id": unique_id,
         "message": "Anonymous session created",
         "expires_at": expires_at.isoformat() + "Z",
+    }
+
+
+# ------------------------------
+# Mark user as active
+# ------------------------------
+@router.post("/mark-active")
+async def mark_active(
+    request: Request,
+    session: AsyncSession = Depends(get_write_session),
+):
+    # Get unique_id from cookies or generate a new one
+    unique_id = request.cookies.get("unique_id")
+    if not unique_id:
+        unique_id = str(uuid.uuid4())
+
+    # Ensure the daily record exists
+    await increment_daily_user_stat(unique_id, session)
+
+    # Update the updated_at timestamp for today
+    today = datetime.utcnow().date()
+    stmt = (
+        update(DailyUserStats)
+        .where(DailyUserStats.date == today)
+        .where(DailyUserStats.unique_id == unique_id)
+        .values(updated_at=datetime.utcnow())
+    )
+
+    await session.execute(stmt)
+    await session.commit()
+
+    return {
+        "status": "ok",
+        "unique_id": unique_id,
+        "last_active": datetime.utcnow().isoformat() + "Z",
     }

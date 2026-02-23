@@ -33,7 +33,7 @@ async def admin_login(
     if not user or user.role != "admin":
         return templates.TemplateResponse(
             "admin/login.html",
-            {"request": request, "error": "Невалиден админ акаунт или парола"},
+            {"request": request, "error": "Invalid admin username or password"},
         )
 
     session_id = await create_session(user)

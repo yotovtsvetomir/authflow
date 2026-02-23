@@ -17,7 +17,7 @@ export default function InfoForm() {
     <div className="container fullHeight">
       <div className={styles.info}>
         <div className={styles.infoInner}>
-          <h2>Настройки</h2>
+          <h2>Settings</h2>
 
           {/* Avatar */}
           <Link
@@ -25,7 +25,7 @@ export default function InfoForm() {
             className={`${styles.infoGroup} ${styles.helper}`}
           >
             <div className={styles.infoContent}>
-              <label>Профилна снимка</label>
+              <label>Profile Picture</label>
             </div>
             <div className={styles.infoIcon}>
               <div className={styles.avatarWrapper}>
@@ -51,7 +51,7 @@ export default function InfoForm() {
           {/* Name */}
           <Link href="/profile/info/settings/name/" className={styles.infoGroup}>
             <div className={styles.infoContent}>
-              <label>Име и фамилия</label>
+              <label>First and Last Name</label>
               {(user?.first_name || user?.last_name) && (
                 <p>{`${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim()}</p>
               )}
@@ -67,7 +67,7 @@ export default function InfoForm() {
             className={styles.infoGroup}
           >
             <div className={styles.infoContent}>
-              <label>Имейл</label>
+              <label>Email</label>
               <p>{user?.email || "—"}</p>
             </div>
 

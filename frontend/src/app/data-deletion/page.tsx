@@ -21,49 +21,6 @@ export default function DataDeletionPage() {
             color: "var(--color-highlight-1)",
           }}
         >
-          Заявка за изтриване на данни / изтриване на акаунт
-        </h1>
-        <p style={{ fontSize: "var(--font-lgl)", marginBottom: "1.4rem" }}>
-          Ако желаете да изтриете своя акаунт и всички свързани с него лични данни
-          от нашата услуга, моля изпратете имейл заявка на:
-        </p>
-        <p
-          style={{
-            fontWeight: "var(--font-weight-bold)",
-            fontSize: "var(--font-lgl)",
-            marginBottom: "2rem",
-          }}
-        >
-          <a
-            href="mailto:support@moyatapokana.bg"
-            style={{
-              color: "var(--color-highlight-1)",
-              textDecoration: "underline",
-            }}
-          >
-            support@moyatapokana.bg
-          </a>
-        </p>
-        <p style={{ fontSize: "var(--font-md)", color: "var(--color-dark-400)" }}>
-          Моля, посочете имейл адреса, с който сте се регистрирали, и ясно
-          напишете, че желаете вашият акаунт и всички данни да бъдат изтрити.
-          <br />
-          <br />
-          Ще обработим вашата заявка възможно най-бързо и ще ви потвърдим по
-          имейл, когато данните ви бъдат изтрити.
-        </p>
-
-        <br />
-        <hr style={{ borderTop: "1px solid var(--color-dark-300)" }} />
-        <br />
-
-        <h1
-          style={{
-            fontSize: "var(--font-3xl)",
-            marginBottom: "1.2rem",
-            color: "var(--color-highlight-1)",
-          }}
-        >
           Request Data Deletion / Account Removal
         </h1>
         <p style={{ fontSize: "var(--font-lgl)", marginBottom: "1.4rem" }}>
@@ -84,7 +41,7 @@ export default function DataDeletionPage() {
               textDecoration: "underline",
             }}
           >
-            поддръжка@моятапокана.бг
+            support@authflow.com
           </a>
         </p>
         <p style={{ fontSize: "var(--font-md)", color: "var(--color-dark-400)" }}>

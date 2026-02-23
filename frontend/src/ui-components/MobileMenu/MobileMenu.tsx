@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { navListVariants, navItemVariants, footVariants, footItemVariants, midVariants, midItemVariants } from './animationVariants';
-
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import styles from './MobileMenu.module.css';
 
@@ -26,6 +26,7 @@ export default function MobileMenu({
   mainLinks,
 }: MobileMenuProps) {
   const footControls = useAnimation();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (open) {
@@ -74,10 +75,10 @@ export default function MobileMenu({
               animate={footControls}
             >
               <motion.div className={styles.account} variants={midItemVariants}>
-                <Link href="/login" onClick={onClose}>
+                <Link href={`/login?from=${encodeURIComponent(pathname)}`} onClick={onClose}>
                   <Button size="large" variant="secondary">Вход</Button>
                 </Link>
-                <Link href="/register" onClick={onClose}>
+                <Link href={`/register?from=${encodeURIComponent(pathname)}`} onClick={onClose}>
                   <Button size="large" variant="secondary">Регистрация</Button>
                 </Link>
               </motion.div>
@@ -95,7 +96,7 @@ export default function MobileMenu({
           >
 
             <motion.div className={styles.cta} variants={footItemVariants}>
-              <p>Покани, които впечатляват</p>
+              <p>Follow on</p>
             </motion.div>
 
             <motion.div className={styles.socials} variants={footItemVariants}>

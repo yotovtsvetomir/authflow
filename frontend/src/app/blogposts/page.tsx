@@ -1,37 +1,58 @@
-// app/blogposts/page.tsx
-import Head from "next/head";
 import Script from "next/script";
 import BlogPostsClient from "./BlogPostsClient";
 import type { components } from "@/shared/types";
+import { cookies } from "next/headers";
 
-type BlogPostRead = components['schemas']['BlogPostOut'];
+type BlogPostsWithAuthors = components["schemas"]["BlogPostsWithAuthors"];
 
-// Fetch all blog posts
-async function getPosts(): Promise<BlogPostRead[]> {
-  const res = await fetch(`${process.env.API_URL_SERVER}/blogposts/`, { cache: 'no-store' });
-  if (!res.ok) return [];
-  return res.json();
-}
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-// Page component
-export default async function BlogPostsPage() {
-  const posts = await getPosts();
+export default async function BlogPostsPage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const getParam = (param?: string | string[]) =>
+    Array.isArray(param) ? param[0] : param || "";
 
-  if (!posts || posts.length === 0) return <p>Няма намерени блог постове.</p>;
+  // Extract query params
+  const search = getParam(sp?.search);
+  const author = getParam(sp?.author);
+  const ordering = getParam(sp?.ordering) || "-created_at";
+  const page = parseInt(getParam(sp?.page) || "1", 10);
+  const pageSize = 10;
 
-  const title = "Блог";
-  const description = "Последните блог постове от нашия сайт.";
-  const url = `${process.env.NEXT_PUBLIC_CLIENT_URL}/blogposts`;
-  const image = posts[0]?.image;
+  // Build the query string for the API
+  let queryString = "";
+  if (search) queryString += `search=${encodeURIComponent(search)}&`;
+  if (author) queryString += `author=${encodeURIComponent(author)}&`;
+  queryString += `page=${page}&page_size=${pageSize}&ordering=${ordering}&`;
+  queryString = queryString ? "?" + queryString.replace(/&$/, "") : "";
 
-  // JSON-LD structured data
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.getAll().map(c => `${c.name}=${c.value}`).join("; ");
+
+  // Fetch the blog posts data
+  const res = await fetch(`${process.env.API_URL_SERVER}/blogposts/${queryString}`, {
+    cache: "no-store",
+    headers: {
+      cookie: cookieHeader,
+    },
+  });
+
+  const data: BlogPostsWithAuthors = await res.json();
+
+  if (!data?.items) {
+    return <p>No blog posts found or invalid response structure.</p>;
+  }
+
+  // Structured data JSON-LD for SEO
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: title,
-    description,
-    url,
-    blogPost: posts.map(post => ({
+    name: "Blog",
+    description: "Latest blog posts from our website",
+    url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/blogposts${queryString}`,
+    blogPost: data.items.map((post, index) => ({
       "@type": "BlogPosting",
       headline: post.title,
       author: post.authored_by || "Unknown",
@@ -40,32 +61,36 @@ export default async function BlogPostsPage() {
       url: `${process.env.NEXT_PUBLIC_CLIENT_URL}/blogposts/${post.slug}`,
       image: post.image || undefined,
       description: post.paragraphs[0]?.slice(0, 120),
-    })),
+    }))
   };
+
+  const title = "Blog";
+  const description = "Latest blog posts from our website";
+  const url = `${process.env.NEXT_PUBLIC_CLIENT_URL}/blogposts${queryString}`;
+  const image = data.items[0]?.image || "/fallback.jpg";
 
   return (
     <>
-      <Head>
+      <head>
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={url} />
 
-        {/* Open Graph */}
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="МоятаПокана.бг" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />
-        {image && <meta property="og:image" content={image} />}
+        <meta property="og:image" content={image} />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        {image && <meta name="twitter:image" content={image} />}
-      </Head>
+        <meta name="twitter:image" content={image} />
+      </head>
 
-      {/* JSON-LD */}
+      {/* JSON-LD structured data */}
       <Script
         id="jsonld"
         type="application/ld+json"
@@ -73,8 +98,16 @@ export default async function BlogPostsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* Render client component with posts */}
-      <BlogPostsClient home={false} posts={posts} />
+      {/* Client component receives posts, pagination info, and authors */}
+      <BlogPostsClient
+        posts={data.items}
+        currentPage={data.current_page}
+        totalPages={data.total_pages}
+        searchQuery={search || ""}
+        authors={data.authors}
+        selectedAuthor={author || ""}
+        ordering={ordering}
+      />
     </>
   );
 }

@@ -14,14 +14,12 @@ import styles from "./Header.module.css";
 
 import { useUser } from '@/context/UserContext';
 
-import Logo from "@/assets/main_logo.svg";
-import LogoMixed from "@/assets/mixed_logo.svg";
+import Logo from "@/assets/logo.png";
 import DefaultAvatar from '@/assets/avatar.png';
 
 import { Button } from '@/ui-components/Button/Button';
 import MobileMenu from '@/ui-components/MobileMenu/MobileMenu';
 import ProfileMenu from '@/ui-components/ProfileMenu/ProfileMenu';
-import SearchOverlay from '@/ui-components/SearchOverlay/SearchOverlay';
 
 export default function HeaderClient() {
   const { user } = useUser();
@@ -46,12 +44,10 @@ export default function HeaderClient() {
     : DefaultAvatar;
 
   const mainLinks = [
-    { href: '/', label: 'Начало' },
-    { href: '/templates', label: 'Шаблони' },
-    { href: '/invitations/create', label: 'Създай' },
-    { href: '/pricing', label: 'Цени' },
-    { href: '/blogposts', label: 'Блог' },
-    { href: '/contact', label: 'Контакти' },
+    { href: '/', label: 'Home' },
+    { href: '/flow', label: 'Flow' },
+    { href: '/blogposts', label: 'Blog' },
+    { href: '/password-reset/request', label: 'Password-reset' }
   ];
 
   useEffect(() => {
@@ -110,7 +106,7 @@ export default function HeaderClient() {
                   className={`${styles.logoImage} ${!isMenuOpen ? styles.visible : styles.hidden}`}
                 />
                 <Image
-                  src={LogoMixed}
+                  src={Logo}
                   alt="Logo"
                   className={`${styles.logoImage} ${isMenuOpen ? styles.visible : styles.hidden}`}
                 />
@@ -134,7 +130,7 @@ export default function HeaderClient() {
                 <button
                   ref={profileIconButtonRef}
                   className={`${styles.iconButton} ${isProfileMenuOpen ? styles.iconButtonActive : ''}`}
-                  aria-label="Профил"
+                  aria-label="Profile"
                   onClick={() => {
                     setIsProfileMenuOpen(prev => !prev);
                     setIsSearchOpen(false);
@@ -149,7 +145,7 @@ export default function HeaderClient() {
 
               <button
                 className={`${styles.iconButton} ${styles.menuButton}`}
-                aria-label={isMenuOpen ? "Затвори меню" : "Отвори меню"}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 onClick={() => {
                   setIsMenuOpen(!isMenuOpen);
                   setIsSearchOpen(false);
@@ -163,7 +159,7 @@ export default function HeaderClient() {
               {/* Desktop */}
               <nav className={styles.desktopNav}>
                 <ul className={styles.navList}>
-                  {mainLinks.slice(1).map((link) => (
+                  {mainLinks.map((link) => (
                     <li key={link.href} className={styles.navItem}>
                       <Link 
                         href={link.href}
@@ -186,7 +182,7 @@ export default function HeaderClient() {
                     setIsSearchOpen(false);
                     setIsMenuOpen(false);
                   }}
-                  aria-label="Профил"
+                  aria-label="Profile"
                 >
                   <Image
                     src={avatarSrc}
@@ -199,51 +195,14 @@ export default function HeaderClient() {
                   <div className={styles.statusDot} />
                 </button>
               ) : (
-                <div className={styles.logregDesktop}>
-                  <Link href="/login">
-                    <Button variant="secondary" size={isXL ? 'large' : undefined}>Вход</Button>
+                 <div className={styles.logregDesktop}>
+                  <Link href={`/login?from=${encodeURIComponent(pathname)}`}>
+                    <Button variant="secondary" size={isXL ? 'large' : undefined}>Login</Button>
                   </Link>
-                  <Link href="/register">
-                    <Button variant="secondary" size={isXL ? 'large' : undefined}>Регистрация</Button>
+                  <Link href={`/register?from=${encodeURIComponent(pathname)}`}>
+                    <Button variant="secondary" size={isXL ? 'large' : undefined}>Register</Button>
                   </Link>
                 </div>
-              )}
-
-              {isL && (
-                <button
-                  className={styles.desktopSearchButton}
-                  aria-label={isSearchOpen ? "Затвори търсене" : "Отвори търсене"}
-                  onClick={() => {
-                    setIsSearchOpen(!isSearchOpen);
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {isSearchOpen ? (
-                      <motion.span
-                        key="close"
-                        className={`material-symbols-outlined ${styles.icon}`}
-                        initial={{ y: -16 }}
-                        animate={{ y: 0 }}
-                        exit={{ y: 16 }}
-                        transition={{ duration: 0.1, ease: "easeInOut" }}
-                      >
-                        close
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="search"
-                        className={`material-symbols-outlined ${styles.icon}`}
-                        initial={{ y: -16 }}
-                        animate={{ y: 0 }}
-                        exit={{ y: 16 }}
-                        transition={{ duration: 0.1, ease: "easeInOut" }}
-                      >
-                        search
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </button>
               )}
             </div>
           </div>
@@ -262,12 +221,6 @@ export default function HeaderClient() {
         onClose={() => setIsProfileMenuOpen(false)}
         anchorRef={activeRef}
         user={user}
-      />
-
-      <SearchOverlay
-        headerRef={headerRef}
-        open={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
       />
     </>
   );

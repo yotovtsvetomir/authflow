@@ -1,2 +1,68 @@
 .Home {
+	min-height: calc(100dvh - var(--mobile-header-height));
+	padding-top: var(--mobile-header-height);
+	padding-bottom: 4rem;
+}
+
+@media (min-width: 1024px) { 
+	.Home {
+		min-height: calc(100dvh - var(--desktop-header-height));
+		padding-top: var(--desktop-header-height);
+	}
+}
+
+.Home strong {
+	color: var(--color-highlight-1);
+}
+
+.Home ul,
+.Home ol {
+	margin-left: 2rem;
+}
+
+.Home li {
+	margin-bottom: 0.5rem;
+	font-size: var(--font-xl);
+}
+
+.Home li::marker {
+	color: var(--color-highlight-1);
+	font-weight: bold;
+}
+
+.Home p {
+	margin-left: calc(2rem - 15.5px);
+	font-size: var(--font-xl);
+}
+
+/* Sections */
+.hero {
+	margin-bottom: 1rem;
+}
+
+.subline {
+	font-size: var(--font-xl);
+	margin-bottom: 1rem;
+	margin-left: calc(2rem - 15.5px);
+}
+
+.tech {
+	margin-bottom: 2rem;
+}
+
+.use_case {
+	margin-bottom: 2rem;
+}
+
+.admin h3 {
+	font-size: var(--font-3xl);
+	margin-bottom: 0.5rem;
+}
+
+.adminAccess {
+	margin: 2rem 0;
+}
+
+.adminAccess ul {
+	margin-bottom: 1rem;
 }

@@ -156,10 +156,40 @@ a {
 }
 
 .section {
-  border-top: 1px solid #eee;
-  padding-top: 2rem;
+  padding-top: 1rem;
 }
 
 .section h1 {
   color: var(--color-highlight-1) !important;
+}
+
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--color-neutral-500);
+  color: var(--color-dark-100);
+  font-family: var(--font-sans);
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-found-container h1 {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-highlight-1);
+  margin-bottom: 1rem;
+}
+
+.not-found-container h2 {
+  font-size: var(--font-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 1rem;
+}
+
+.not-found-container p {
+  font-size: var(--font-md);
+  color: var(--color-dark-400);
+  margin-bottom: 2rem;
 }

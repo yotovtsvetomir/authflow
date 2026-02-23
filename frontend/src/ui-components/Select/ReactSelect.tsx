@@ -26,7 +26,7 @@ export default function ReactSelect<T extends { value: string; label: string }>(
   options,
   value,
   onChange,
-  placeholder = 'Избери опция',
+  placeholder = 'Select option',
   isDisabled = false,
   isClearable = false,
   isSearchable = false,

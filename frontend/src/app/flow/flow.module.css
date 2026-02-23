@@ -1,0 +1,27 @@
+.authFlow {
+	padding-bottom: 4rem;
+}
+
+.authFlow strong {
+	color: var(--color-highlight-1);
+}
+
+.authFlow li::marker {
+	color: var(--color-highlight-1);
+	font-weight: bold;
+}
+
+.authFlow h2 {
+	margin-top: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+.authFlow p, .authFlow li {
+	margin-left: 2rem;
+	margin-bottom: 0.5rem;
+	font-size: var(--font-xl);
+}
+
+.authFlow p {
+	margin-left: calc(2rem - 15.5px);
+}

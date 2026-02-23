@@ -8,10 +8,10 @@ COPY package*.json ./
 
 ENV NODE_ENV=development
 
-# Install dependencies fresh inside container
+# Install all dependencies (including dev for local / storybook builds)
 RUN npm install --legacy-peer-deps
 
-# Install Playwright dependencies (optional)
+# Optional: Playwright dependencies
 RUN npx playwright install --with-deps
 
 COPY . .
@@ -26,10 +26,12 @@ COPY package*.json ./
 
 ENV NODE_ENV=production
 
-RUN npm ci --omit=dev
+# Install all dependencies including dev, because Next.js build needs devDeps
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
+# Build Next.js
 RUN npm run build
 
 # -------------------------------
@@ -39,7 +41,12 @@ FROM node:20-alpine AS next-prod
 
 WORKDIR /app
 
-COPY --from=next-build /app ./
+# Copy only the build output and necessary dependencies
+COPY --from=next-build /app/package.json ./
+COPY --from=next-build /app/package-lock.json ./
+COPY --from=next-build /app/.next ./.next
+COPY --from=next-build /app/public ./public
+COPY --from=next-build /app/node_modules ./node_modules
 
 ENV NODE_ENV=production
 EXPOSE 3000
@@ -50,5 +57,7 @@ CMD ["npm", "start"]
 # 4. Storybook stage
 # -------------------------------
 FROM base AS storybook
+
+WORKDIR /app
 EXPOSE 6006
 CMD ["npm", "run", "storybook"]

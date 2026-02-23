@@ -40,7 +40,7 @@ export default function OverviewSection({
               <div className={styles.imageWrapper}>
                 <Image
                   src={value}
-                  alt="Преглед на тапета"
+                  alt="Preview"
                   width={64}
                   height={64}
                   className={styles.imagePreview}

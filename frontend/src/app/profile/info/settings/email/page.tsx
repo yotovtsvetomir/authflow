@@ -15,13 +15,13 @@ export default function EditEmailForm() {
   return (
     <div className="container fullHeight">
       <div className={styles.sectionWrapper}>
-        <h2>Имейл</h2>
+        <h2>Email</h2>
 
         <form noValidate>
           <Input
             id="email"
             name="email"
-            label="Имейл"
+            label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             size="large"
@@ -31,10 +31,10 @@ export default function EditEmailForm() {
 
           <div className={styles.avatarActions}>
             <Link href="/profile/info">
-              <Button variant="ghost">Назад</Button>
+              <Button variant="ghost">Back</Button>
             </Link>
 
-            <Button disabled>Запази</Button>
+            <Button disabled>Save</Button>
           </div>
         </form>
       </div>

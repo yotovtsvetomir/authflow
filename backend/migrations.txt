@@ -2,7 +2,11 @@
 
 * ps if db is wiped out or new, move the alembic/versions/* to backup and run the commands afterwards
 
-* docker exec -it moyatapokana-db_writer-1 psql -U postgres -d app_db
+* docker exec -it authflow-db_writer-1 psql -U postgres -d app_db
+* Minio permissions: 
+* docker exec -it 10b7903e2b8c (container id) /bin/sh
+* mc alias set local http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD
+* mc anonymous set public local/my-bucket
 
-docker exec -it moyatapokana-backend-1 alembic revision --autogenerate -m "latest migration"
-docker exec -it moyatapokana-backend-1 alembic upgrade head
+docker exec -it authflow-backend-1 alembic revision --autogenerate -m "latest migration"
+docker exec -it authflow-backend-1 alembic upgrade head

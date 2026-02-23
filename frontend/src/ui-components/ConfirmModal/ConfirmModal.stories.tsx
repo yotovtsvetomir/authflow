@@ -20,16 +20,16 @@ export const Default: Story = {
       <>
         {open && (
           <ConfirmModal
-            title="Вече имате чернова"
-            description="Ако продължите, текущата чернова ще бъде изгубена. Искате ли да продължите?"
-            confirmText="Продължи"
-            cancelText="Отказ"
+            title="You already have a draft"
+            description="If you continue, the current draft will be lost. Do you want to proceed?"
+            confirmText="Continue"
+            cancelText="Cancel"
             onConfirm={() => {
-              alert('Потвърдено')
+              alert('Confirmed')
               setOpen(false)
             }}
             onCancel={() => {
-              alert('Отказано')
+              alert('Cancelled')
               setOpen(false)
             }}
           />

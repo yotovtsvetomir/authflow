@@ -1,6 +1,7 @@
 import Script from "next/script";
 import Head from "next/head";
 import BlogPostClient from "./BlogPostClient";
+import { cookies } from "next/headers";
 import type { components } from "@/shared/types";
 
 type BlogPostRead = components['schemas']['BlogPostOut'];
@@ -10,12 +11,20 @@ interface Props {
 }
 
 async function getPost(slug: string): Promise<BlogPostRead | null> {
-  const res = await fetch(`${process.env.API_URL_SERVER}/blogposts/${slug}`, { cache: 'no-store' });
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.getAll().map(c => `${c.name}=${c.value}`).join("; ");
+
+  const res = await fetch(`${process.env.API_URL_SERVER}/blogposts/${slug}`, {
+    cache: 'no-store',
+    headers: {
+      cookie: cookieHeader,
+    },
+  });
+
   if (!res.ok) return null;
   return res.json();
 }
 
-// Page component
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -27,7 +36,6 @@ export default async function BlogPostPage({ params }: Props) {
   const url = `${process.env.NEXT_PUBLIC_CLIENT_URL}/blogpost/${post.slug}`;
   const image = post.image || undefined;
 
-  // JSON-LD structured data
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

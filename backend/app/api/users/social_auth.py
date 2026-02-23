@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 from app.db.models.user import User
-from app.db.models.invitation import Invitation, InvitationStatus
 from app.db.session import get_write_session, get_read_session
 from app.services.stats import increment_daily_user_stat
 from app.services.auth import create_session, hash_password, delete_session
@@ -13,22 +12,20 @@ import httpx
 from app.core.settings import settings
 from pydantic import BaseModel
 import secrets
+import json
+from urllib.parse import unquote
 
 router = APIRouter()
 
 
 class GoogleLoginPayload(BaseModel):
     id_token: str
+    state: str | None = None
 
 
 class FacebookLoginPayload(BaseModel):
     user: dict
-
-
-def process_name(name: str) -> str:
-    if re.fullmatch(r"[A-Za-z\s\-']+", name):
-        return translit(name, "bg")
-    return name
+    state: str | None = None
 
 
 # ------------------------------
@@ -41,7 +38,15 @@ async def google_login(
     db_read: AsyncSession = Depends(get_read_session),
     db_write: AsyncSession = Depends(get_write_session),
 ):
-    # manually extract the anonymous_session_id from cookies
+    # Extract dynamic redirect from state
+    redirect_to = "/profile"
+    if payload.state:
+        try:
+            redirect_to = json.loads(unquote(payload.state)).get("from", "/profile")
+        except Exception:
+            redirect_to = "/profile"
+
+    # Extract anonymous_session_id from cookies
     anon_session_id = None
     cookie_header = request.headers.get("cookie")
     if cookie_header:
@@ -51,6 +56,7 @@ async def google_login(
         if "anonymous_session_id" in cookies:
             anon_session_id = cookies["anonymous_session_id"].value
 
+    # Verify Google ID token
     id_token = payload.id_token
     verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token}"
     async with httpx.AsyncClient() as client:
@@ -64,7 +70,8 @@ async def google_login(
 
     if data.get("aud") != settings.GOOGLE_CLIENT_ID:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid audience in token"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid audience in token",
         )
 
     email = data.get("email")
@@ -73,10 +80,11 @@ async def google_login(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email not available"
         )
 
-    first_name = process_name(data.get("given_name", ""))
-    last_name = process_name(data.get("family_name", ""))
+    first_name = data.get("given_name", "")
+    last_name = data.get("family_name", "")
     profile_picture = data.get("picture")
 
+    # Check if user exists
     result = await db_read.execute(select(User).filter_by(email=email))
     user = result.scalars().first()
 
@@ -94,44 +102,12 @@ async def google_login(
         await db_write.commit()
         await db_write.refresh(user)
 
-    # -------------------- Claim drafts before deleting anon session --------------------
-    if anon_session_id:
-        result_user_invites = await db_read.execute(
-            select(func.count(Invitation.id)).where(
-                Invitation.owner_id == user.id,
-                Invitation.status == InvitationStatus.DRAFT,
-            )
-        )
-        user_invite_count = result_user_invites.scalar() or 0
-
-        result_drafts = await db_read.execute(
-            select(Invitation).where(Invitation.anon_session_id == anon_session_id)
-        )
-
-        drafts = result_drafts.scalars().all()
-        max_allowed = 3 - user_invite_count
-        drafts_to_transfer = drafts[:max_allowed] if max_allowed > 0 else []
-
-        for draft in drafts_to_transfer:
-            draft = await db_write.merge(draft)
-            draft.owner_id = user.id
-            draft.anon_session_id = None
-
-        if drafts_to_transfer:
-            await db_write.commit()
-
-        await delete_session(anon_session_id, anonymous=True)
-
-    # -------------------- Create new session --------------------
+    # Create session
     session_id = await create_session(user)
-
-    # -------------------- Track unique user --------------------
-    unique_id = request.cookies.get("unique_id") or str(user.id)
-    await increment_daily_user_stat(unique_id, db_write)
 
     return {
         "session_id": session_id,
-        "unique_id": unique_id,
+        "redirect_to": redirect_to,
         "message": "Login successful",
     }
 
@@ -142,11 +118,19 @@ async def google_login(
 @router.post("/facebook-login")
 async def facebook_login(
     payload: FacebookLoginPayload,
-    request: Request,  # <-- add Request
+    request: Request,
     db_read: AsyncSession = Depends(get_read_session),
     db_write: AsyncSession = Depends(get_write_session),
 ):
-    # Extract anonymous_session_id from headers
+    # Extract dynamic redirect from state
+    redirect_to = "/profile"
+    if payload.state:
+        try:
+            redirect_to = json.loads(unquote(payload.state)).get("from", "/profile")
+        except Exception:
+            redirect_to = "/profile"
+
+    # Extract anonymous_session_id from cookies
     anon_session_id = None
     cookie_header = request.headers.get("cookie")
     if cookie_header:
@@ -167,8 +151,10 @@ async def facebook_login(
         )
 
     email = email if email else f"fb_{fb_id}"
-    first_name = process_name(user_data.get("first_name", ""))
-    last_name = process_name(user_data.get("last_name", ""))
+
+    # Split full name into first/last
+    name = user_data.get("name", "")
+    first_name, last_name = (name.split(" ", 1) + [""])[:2]
 
     profile_picture = (
         user_data.get("picture", {}).get("data", {}).get("url")
@@ -176,6 +162,7 @@ async def facebook_login(
         else None
     )
 
+    # Check if user exists
     result = await db_read.execute(select(User).filter_by(email=email))
     user = result.scalars().first()
 
@@ -193,42 +180,11 @@ async def facebook_login(
         await db_write.commit()
         await db_write.refresh(user)
 
-    # -------------------- Claim drafts before deleting anon session --------------------
-    if anon_session_id:
-        result_user_invites = await db_read.execute(
-            select(func.count(Invitation.id)).where(
-                Invitation.owner_id == user.id,
-                Invitation.status == InvitationStatus.DRAFT,
-            )
-        )
-        user_invite_count = result_user_invites.scalar() or 0
-
-        result_drafts = await db_read.execute(
-            select(Invitation).where(Invitation.anon_session_id == anon_session_id)
-        )
-
-        drafts = result_drafts.scalars().all()
-        max_allowed = 3 - user_invite_count
-        drafts_to_transfer = drafts[:max_allowed] if max_allowed > 0 else []
-
-        for draft in drafts_to_transfer:
-            draft = await db_write.merge(draft)
-            draft.owner_id = user.id
-            draft.anon_session_id = None
-
-        if drafts_to_transfer:
-            await db_write.commit()
-
-        await delete_session(anon_session_id, anonymous=True)
-
-    # -------------------- Create new session --------------------
+    # Create session
     session_id = await create_session(user)
-
-    unique_id = request.cookies.get("unique_id") or str(user.id)
-    await increment_daily_user_stat(unique_id, db_write)
 
     return {
         "session_id": session_id,
-        "unique_id": unique_id,
+        "redirect_to": redirect_to,
         "message": "Login successful",
     }

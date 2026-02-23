@@ -86,7 +86,7 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
                 <h5>
                   {user
                     ? `${user?.first_name} ${user?.last_name}`.trim()
-                    : 'Потребител'}
+                    : 'User'}
                 </h5>
                 <p>
                   {user?.email || 'example@email.com'}
@@ -96,33 +96,13 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
 
             <div className={styles.dropdownInner}>
               <Link
-                key="/profile/invitations"
-                href="/profile/invitations"
-                className={`${styles.dropdownItem} ${pathname === '/profile/invitations' ? styles.selected : ''}`}
-                onClick={onClose}
-              >
-                <span className="material-symbols-outlined">mail</span>
-                <p>Покани</p>
-              </Link>
-
-              <Link
-                key="/profile/orders"
-                href="/profile/orders"
-                className={`${styles.dropdownItem} ${pathname === '/profile/orders' ? styles.selected : ''}`}
-                onClick={onClose}
-              >
-                <span className="material-symbols-outlined">shopping_cart</span>
-                <p>Поръчки</p>
-              </Link>
-
-              <Link
                 key="/profile/info"
                 href="/profile/info"
                 className={`${styles.dropdownItem} ${pathname === '/profile/info' ? styles.selected : ''}`}
                 onClick={onClose}
               >
                 <span className="material-symbols-outlined">manage_accounts</span>
-                <p>Настройки</p>
+                <p>Settings</p>
               </Link>
 
               <Link 
@@ -132,7 +112,7 @@ export default function ProfileMenu({ open, onClose, user, anchorRef }: ProfileM
                 onClick={onClose}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "1.5rem" }}>logout</span>
-                <p>Изход</p>
+                <p>Logout</p>
               </Link>
             </div>
           </div>

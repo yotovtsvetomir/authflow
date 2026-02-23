@@ -14,7 +14,7 @@ export default function RequestPasswordReset() {
   function validate() {
     const errs: { email?: string } = {};
     if (!email.trim()) {
-      errs.email = 'Моля, въведете имейл';
+      errs.email = 'Please enter an email';
     }
     return errs;
   }
@@ -42,33 +42,33 @@ export default function RequestPasswordReset() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(data.message || 'Линк за смяна на паролата беше изпратен на имейла ви.');
+        setMessage(data.message || 'A password reset link has been sent to your email.');
       } else {
-        setErrors({ apiError: data.detail || 'Възникна грешка.' });
+        setErrors({ apiError: data.detail || 'An error occurred.' });
       }
     } catch (err) {
       console.error('Request error:', err);
-      setErrors({ apiError: 'Възникна грешка. Моля, опитайте по-късно.' });
+      setErrors({ apiError: 'An error occurred. Please try again later.' });
     }
   };
 
   return (
     <div className="container fullHeight">
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
-        <h2 className={styles.heading}>Възстанови парола</h2>
+        <h2 className={styles.heading}>Reset Password</h2>
 
         <Input
           id="email"
           name="email"
           type="email"
-          label="Имейл"
+          label="Email"
           value={email}
           error={errors.email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <Button type="submit" width="100%" disabled={isSubmitted}>
-          {isSubmitted ? 'Изпратен' : 'Изпрати линк'}
+          {isSubmitted ? 'Sent' : 'Send Link'}
         </Button>
 
         {message && <p className={`${styles.message} ${styles.success}`}>{message}</p>}

@@ -11,20 +11,26 @@ interface Props {
 }
 
 export default function BlogPostClient({ post }: Props) {
-  const updatedDate = post.updated_at
-    ? new Date(post.updated_at).toLocaleDateString('bg-BG', {
+  let updatedDate = '';
+
+  if (post.updated_at) {
+    const date = new Date(post.updated_at);
+
+    updatedDate = date
+      .toLocaleDateString('en-GB', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
       })
-    : '';
+      .replace(/\//g, '.');
+  }
 
   return (
     <div className="container fullHeight centerWrapper">
       <h1 className={styles.title}>{post.title}</h1>
       <p className={styles.meta}>
-        {post.authored_by ? `От ${post.authored_by}` : ''} {' / '}
-        {updatedDate}
+        {post.authored_by ? `From: ${post.authored_by}` : ''} {' / '}
+        {`Posted on: ${updatedDate}`}
       </p>
       {post.image && (
         <div className={styles.imageWrapper}>

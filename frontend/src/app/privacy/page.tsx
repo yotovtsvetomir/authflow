@@ -1,4 +1,3 @@
-// app/privacy/page.tsx
 export default function PrivacyPolicy() {
   return (
     <div className="fullHeight" style={{ background: "var(--color-neutral-400)", paddingBottom: '2rem' }}>
@@ -15,99 +14,6 @@ export default function PrivacyPolicy() {
           position: "relative",
         }}
       >
-        {/* Bulgarian Section */}
-        <h1
-          style={{
-            fontSize: "var(--font-3xl)",
-            marginBottom: "1.1rem",
-            color: "var(--color-highlight-1)",
-          }}
-        >
-          Политика за поверителност
-        </h1>
-        <p>Последна актуализация: 11 юни 2025 г.</p>
-
-        {/** Section h2 styling reused inline */}
-        {[
-          {
-            title: "1. Въведение",
-            content:
-              "Този уебсайт (“Moyata Pokana”, “ние”, “нас”) се ангажира да защитава поверителността на своите потребители. Тази политика за поверителност обяснява как събираме, използваме и защитаваме вашата информация.",
-          },
-          {
-            title: "2. Каква информация събираме?",
-            list: [
-              "Имейл адрес",
-              "Име и фамилия (ако е предоставено от Facebook/Google)",
-              "Други данни, предоставени доброволно при използване на нашата услуга",
-            ],
-          },
-          {
-            title: "3. Как използваме вашата информация?",
-            list: [
-              "За да ви регистрираме и идентифицираме във “Moyata Pokana”",
-              "За да ви изпращаме важни съобщения, свързани с вашата регистрация или услуги",
-              "За да подобрим услугата и потребителското изживяване",
-            ],
-          },
-          {
-            title: "4. Споделяне на информация",
-            content:
-              "Вашите лични данни не се споделят с трети страни, освен ако това не се изисква от закона или при нужда за предоставяне на услугата.",
-          },
-          {
-            title: "5. Защита на данните",
-            content:
-              "Вземаме разумни мерки за защита на вашата информация. Въпреки това, не можем да гарантираме абсолютна сигурност на данните, предавани по интернет.",
-          },
-          {
-            title: "6. Вашите права",
-            content:
-              <>
-                Можете по всяко време да поискате достъп до, корекция или изтриване на вашите лични данни, като се свържете с нас на:{" "}
-                <a
-                  href="mailto:support@moyatapokana.bg"
-                  style={{ color: "var(--color-highlight-1)", textDecoration: "underline" }}
-                >
-                  support@moyatapokana.bg
-                </a>
-              </>,
-          },
-          {
-            title: "7. Промени в политиката",
-            content:
-              "Запазваме си правото да актуализираме тази политика за поверителност. Всички промени ще бъдат публикувани на тази страница.",
-          },
-        ].map((section, idx) => (
-          <div key={idx}>
-            <h2
-              style={{
-                fontSize: "var(--font-lg)",
-                marginTop: "2rem",
-                marginBottom: "0.7rem",
-                color: "var(--color-highlight-1)",
-                fontWeight: "var(--font-weight-semi)",
-              }}
-            >
-              {section.title}
-            </h2>
-            {section.list ? (
-              <ul style={{ paddingLeft: "1.3rem", marginBottom: "1rem", lineHeight: 1.7 }}>
-                {section.list.map((item, i) => (
-                  <li key={i} style={{ fontSize: "var(--font-md)", marginBottom: "0.45rem" }}>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p style={{ fontSize: "var(--font-md)", lineHeight: 1.7 }}>{section.content}</p>
-            )}
-          </div>
-        ))}
-
-        <hr style={{ borderTop: "1px solid var(--color-dark-300)", margin: "2.5rem 0" }} />
-
-        {/* English Section */}
         <h1
           style={{
             fontSize: "var(--font-3xl)",
@@ -123,7 +29,7 @@ export default function PrivacyPolicy() {
           {
             title: "1. Introduction",
             content:
-              "This website (“Moyata Pokana”, “we”, “us”) is committed to protecting your privacy. This privacy policy explains how we collect, use, and safeguard your information.",
+              "This website (“Authflow”, “we”, “us”) is committed to protecting your privacy. This privacy policy explains how we collect, use, and safeguard your information.",
           },
           {
             title: "2. What information do we collect?",
@@ -154,7 +60,7 @@ export default function PrivacyPolicy() {
                   href="mailto:support@moyatapokana.bg"
                   style={{ color: "var(--color-highlight-1)", textDecoration: "underline" }}
                 >
-                  support@moyatapokana.bg
+                  support@authflow.com
                 </a>
               </>,
           },

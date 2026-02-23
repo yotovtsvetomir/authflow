@@ -9,11 +9,11 @@ const meta: Meta<typeof MobileMenu> = {
     open: true,
     onClose: () => alert('Menu closed'),
     mainLinks: [
-      { href: '/', label: 'Начало' },
-      { href: '/templates', label: 'Покани шаблони' },
-      { href: '/invitations/create', label: 'Създай покана' },
-      { href: '/about', label: 'За нас' },
-      { href: '/contact', label: 'Контакт' },
+      { href: '/', label: 'Home' },
+      { href: '/templates', label: 'Invitation Templates' },
+      { href: '/invitations/create', label: 'Create Invitation' },
+      { href: '/about', label: 'About Us' },
+      { href: '/contact', label: 'Contact' },
     ]
   },
 };

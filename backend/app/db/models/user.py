@@ -13,6 +13,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="customer")
     profile_picture = Column(String, nullable=True, default=None)
+    active = Column(Boolean, default=False)
 
 
 class PasswordResetToken(Base):

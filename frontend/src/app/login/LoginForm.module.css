@@ -57,11 +57,11 @@
 }
 
 .buttonSecondaryGroup {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .buttonSecondaryGroup p {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--color-dark-500);
 }
 
@@ -106,4 +106,24 @@
   .logo {
     margin-bottom: 1rem;
   }
+}
+
+.errorMessage {
+  color: var(--color-error-1);
+  font-size: var(--font-lg);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.successMessage {
+  color: var(--color-success-1);
+  font-size: var(--font-lg);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.confirmLink {
+  color: var(--color-error-1);
+  text-decoration: underline;
+  cursor: pointer;
 }

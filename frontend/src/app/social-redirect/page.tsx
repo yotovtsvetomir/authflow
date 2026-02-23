@@ -1,18 +1,20 @@
 "use client";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function GoogleCallbackPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect_to") || "/profile";
 
   useEffect(() => {
     if (window.opener) {
-      window.opener.location = "/profile";
+      window.opener.location.href = redirectTo;
       window.close();
     } else {
-      router.push("/");
+      router.push(redirectTo);
     }
-  }, [router]);
+  }, [router, redirectTo]);
 
   return <div>Closing...</div>;
 }

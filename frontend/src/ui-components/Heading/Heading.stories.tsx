@@ -14,12 +14,12 @@ type Story = StoryObj<typeof Heading>;
 export const Sizes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <Heading size="3xl">Заглавие 3XL</Heading>
-      <Heading size="2xl">Заглавие 2XL</Heading>
-      <Heading size="xl">Заглавие XL</Heading>
-      <Heading size="lg">Заглавие LG</Heading>
-      <Heading size="md">Заглавие MD</Heading>
-      <Heading size="sm">Заглавие SM</Heading>
+      <Heading size="3xl">Heading 3XL</Heading>
+      <Heading size="2xl">Heading 2XL</Heading>
+      <Heading size="xl">Heading XL</Heading>
+      <Heading size="lg">Heading LG</Heading>
+      <Heading size="md">Heading MD</Heading>
+      <Heading size="sm">Heading SM</Heading>
     </div>
   ),
 };
@@ -27,9 +27,9 @@ export const Sizes: Story = {
 export const Alignment: Story = {
   render: () => (
     <>
-      <Heading align="left">Подравняване: Ляво</Heading>
-      <Heading align="center">Подравняване: Център</Heading>
-      <Heading align="right">Подравняване: Дясно</Heading>
+      <Heading align="left">Alignment: Left</Heading>
+      <Heading align="center">Alignment: Center</Heading>
+      <Heading align="right">Alignment: Right</Heading>
     </>
   ),
 };
@@ -37,10 +37,10 @@ export const Alignment: Story = {
 export const Weights: Story = {
   render: () => (
     <>
-      <Heading weight="medium">Тегло: Medium</Heading>
-      <Heading weight="semi">Тегло: Semi</Heading>
-      <Heading weight="bold">Тегло: Bold</Heading>
-      <Heading weight="extrabold">Тегло: ExtraBold</Heading>
+      <Heading weight="medium">Weight: Medium</Heading>
+      <Heading weight="semi">Weight: Semi</Heading>
+      <Heading weight="bold">Weight: Bold</Heading>
+      <Heading weight="extrabold">Weight: ExtraBold</Heading>
     </>
   ),
 };
@@ -48,9 +48,9 @@ export const Weights: Story = {
 export const CustomTag: Story = {
   render: () => (
     <>
-      <Heading as="h1">H1 Таг</Heading>
-      <Heading as="h2">H2 Таг</Heading>
-      <Heading as="h3">H3 Таг</Heading>
+      <Heading as="h1">H1 Tag</Heading>
+      <Heading as="h2">H2 Tag</Heading>
+      <Heading as="h3">H3 Tag</Heading>
     </>
   ),
 };
@@ -58,10 +58,10 @@ export const CustomTag: Story = {
 export const Colors: Story = {
   render: () => (
     <>
-      <Heading color="default">Тъмен текст</Heading>
-      <Heading color="highlight">Маркиран текст</Heading>
+      <Heading color="default">Dark Text</Heading>
+      <Heading color="highlight">Highlighted Text</Heading>
       <div style={{ background: '#2F3038', padding: '0.1rem' }}>
-        <Heading color="white">Бял текст върху тъмен фон</Heading>
+        <Heading color="white">White Text on Dark Background</Heading>
       </div>
     </>
   ),

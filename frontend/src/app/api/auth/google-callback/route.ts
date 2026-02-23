@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       "Content-Type": "application/json",
       "Cookie": request.headers.get("cookie") || "",
     },
-    body: JSON.stringify({ id_token }),
+    body: JSON.stringify({ id_token, state: url.searchParams.get("state") }),
   });
 
   if (!backendRes.ok) {
@@ -54,7 +54,12 @@ export async function GET(request: NextRequest) {
 
   const backendData = await backendRes.json();
 
-  const res = NextResponse.redirect(new URL("/social-redirect", request.url));
+  const res = NextResponse.redirect(
+    new URL(
+      `/social-redirect?redirect_to=${encodeURIComponent(backendData.redirect_to)}`,
+      request.url
+    )
+  );
 
   const isProd = process.env.NODE_ENV === "production";
 

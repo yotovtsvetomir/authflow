@@ -110,7 +110,7 @@
 
 @media (min-width: 1024px) {
   .dropdown {
-    top: calc(var(--desktop-header-height) + 0.5rem);
+    top: calc(var(--desktop-header-height) - 0.5rem);
     right: 0.5rem;
     width: 350px;
     border-radius: 7px;

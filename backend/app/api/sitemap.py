@@ -12,7 +12,6 @@ from transliterate import translit
 from app.core.redis_client import get_redis_client
 from app.db.session import get_read_session
 from app.db.models.blog import BlogPost
-from app.db.models.invitation import Template, Category
 from pydantic import BaseModel
 
 REDIS_KEY = "sitemap_xml"
@@ -42,13 +41,12 @@ async def sitemap(
     if cached_sitemap:
         return Response(content=cached_sitemap, media_type="application/xml")
 
-    base_url = "https://www.moyatapokana.bg"
+    base_url = "https://www.authflow.com"
     urls: List[UrlEntry] = []
 
     # --- Static pages ---
     static_pages = [
-        "/", "/about", "/contact", "/blogposts", "/pricing", "/templates",
-        "/privacy", "/cookies", "/data-deletion"
+        "/", "/blogposts", "/privacy", "/cookies", "/data-deletion"
     ]
     for page in static_pages:
         urls.append(UrlEntry(loc=f"{base_url}{page}", lastmod=datetime.utcnow()))
@@ -63,60 +61,6 @@ async def sitemap(
                 lastmod=post.updated_at or post.created_at or datetime.utcnow()
             )
         )
-
-    # --- Templates ---
-    result_templates = await db.execute(select(Template).where(Template.is_released))
-    templates: List[Template] = result_templates.scalars().all()
-    for tpl in templates:
-        urls.append(UrlEntry(loc=f"{base_url}/templates/{tpl.slug}",
-                             lastmod=tpl.updated_at or datetime.utcnow()))
-
-    # --- Categories + Subcategories for sitemap ---
-    category_result = await db.execute(
-        select(Category).options(
-            selectinload(Category.subcategories)
-        )
-    )
-    categories = category_result.scalars().unique().all()
-
-    for category in categories:
-        cat_slug = slugifycats(category.name)
-        if category.subcategories:
-            # Categories with subcategories
-            for subcat in category.subcategories:
-                subcat_slug = slugifycats(subcat.name)
-                # Compute lastmod for templates in this category/subcategory combo
-                result_lastmod = await db.execute(
-                    select(func.max(Template.updated_at))
-                    .where(
-                        Template.category_id == category.id,
-                        Template.subcategory_id == subcat.id,
-                        Template.is_released
-                    )
-                )
-                last_updated = result_lastmod.scalar() or datetime.utcnow()
-                urls.append(
-                    UrlEntry(
-                        loc=f"{base_url}/templates?category={cat_slug}&subcategory={subcat_slug}",
-                        lastmod=last_updated
-                    )
-                )
-        else:
-            # Single category without subcategories
-            result_lastmod = await db.execute(
-                select(func.max(Template.updated_at))
-                .where(
-                    Template.category_id == category.id,
-                    Template.is_released
-                )
-            )
-            last_updated = result_lastmod.scalar() or datetime.utcnow()
-            urls.append(
-                UrlEntry(
-                    loc=f"{base_url}/templates?category={cat_slug}",
-                    lastmod=last_updated
-                )
-            )
 
     # --- Build XML ---
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'

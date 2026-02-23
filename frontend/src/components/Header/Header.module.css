@@ -83,8 +83,8 @@
   font-size: var(--font-xl);
 
   position: relative;
-  width: 7rem;
-  height: 2rem;
+  width: 40px;
+  height: 30px;
 }
 
 .logoLink a {
@@ -322,13 +322,13 @@
   }
 
   .logoLink {
-      width: 7.5rem;
-      height: 2.5rem;
+    width: 55px;
+    height: 40px;
   }
 
   .logoImage {
-    width: 7.5rem;
-    height: 2.5rem;
+    width: 55px;
+    height: 40px;
   }
 
   .iconButton {

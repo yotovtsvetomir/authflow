@@ -8,6 +8,7 @@ import { Button } from '@/ui-components/Button/Button';
 import { Heading } from '@/ui-components/Heading/Heading';
 import { TextLink } from '@/ui-components/TextLink/TextLink';
 import SideSlideshow from '@/ui-components/SideSlideshow/SideSlideshow';
+import { useSearchParams } from 'next/navigation';
 
 import styles from './RegisterForm.module.css';
 
@@ -18,6 +19,9 @@ import Birthday from '@/assets/birthday.png';
 import Wedding from '@/assets/wedding.png';
 
 export default function RegisterPage() {
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from') || '/profile';
+
   const {
     values,
     confirmPassword,
@@ -31,7 +35,7 @@ export default function RegisterPage() {
     handleGoogleRegister,
     handleFacebookRegister,
     fbReady,
-  } = useRegister();
+  } = useRegister({ redirectTo: from });
 
   return (
     <div className={styles.screen}>
@@ -40,18 +44,17 @@ export default function RegisterPage() {
           <div className={styles.head}>
             <Link href="/">
               <Image
-                src={LogoLetters}
-                width={150}
-                height={15}
+                src={Logo}
+                width={60}
+                height={50}
                 alt="Logo"
-                className={styles.logoLetters}
+                className={styles.Logo}
               />
             </Link>
           </div>
 
           <div className={styles.formWrapper}>
             <div className={styles.formHeader}>
-              <Image src={Logo} width={44} height={34} alt="Logo" className={styles.logo} />
               <Heading
                 marginBottom="1rem"
                 as="h1"
@@ -59,7 +62,7 @@ export default function RegisterPage() {
                 color="--color-dark-300"
                 align="center"
               >
-                Добре дошли
+                Welcome
               </Heading>
             </div>
 
@@ -72,7 +75,7 @@ export default function RegisterPage() {
                   alt="Google Logo"
                   className={styles.sociallogo}
                 />
-                <p>Регистрация с Google</p>
+                <p>Register with Google</p>
               </Button>
 
               <Button
@@ -89,12 +92,12 @@ export default function RegisterPage() {
                   alt="Facebook Logo"
                   className={styles.sociallogo}
                 />
-                <p>Регистрация с Facebook</p>
+                <p>Register with Facebook</p>
               </Button>
             </div>
 
             <div className={styles.divider}>
-              <p>или</p>
+              <p>or</p>
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
@@ -102,7 +105,7 @@ export default function RegisterPage() {
                 id="first_name"
                 name="first_name"
                 type="text"
-                label="Име"
+                label="First Name"
                 value={values.first_name}
                 onChange={handleChange}
                 onFocus={handleFocus('first_name')}
@@ -114,7 +117,7 @@ export default function RegisterPage() {
                 id="last_name"
                 name="last_name"
                 type="text"
-                label="Фамилия"
+                label="Last Name"
                 value={values.last_name}
                 onChange={handleChange}
                 onFocus={handleFocus('last_name')}
@@ -126,7 +129,7 @@ export default function RegisterPage() {
                 id="email"
                 name="email"
                 type="email"
-                label="Имейл"
+                label="Email"
                 value={values.email}
                 onChange={handleChange}
                 onFocus={handleFocus('email')}
@@ -138,7 +141,7 @@ export default function RegisterPage() {
                 id="password"
                 name="password"
                 type="password"
-                label="Парола"
+                label="Password"
                 value={values.password}
                 onChange={handleChange}
                 onFocus={handleFocus('password')}
@@ -150,7 +153,7 @@ export default function RegisterPage() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                label="Повтори паролата"
+                label="Confirm Password"
                 value={confirmPassword}
                 onChange={handleConfirmChange}
                 onFocus={handleFocus('confirmPassword')}
@@ -159,20 +162,20 @@ export default function RegisterPage() {
               />
 
               <Button width="100%" type="submit" variant="primary" disabled={loading || success}>
-                {loading ? 'Регистрирам...' : 'Регистрация'}
+                {loading ? 'Registering...' : 'Register'}
               </Button>
 
               {errors.apiError && <p className={styles.errorMessage}>{errors.apiError}</p>}
-              {success && <p className={styles.successMessage}>Успешна регистрация!</p>}
+              {success && <p className={styles.successMessage}>Registration successful!</p>}
 
               <div className={styles.buttonSecondaryGroup}>
                 <p>
-                  Продължавайки, вие се съгласявате с нашите{' '}
-                  <TextLink href="/terms">Условия</TextLink> и{' '}
-                  <TextLink href="/privacy">Политика за поверителност</TextLink>.
+                  By continuing, you agree to our{' '}
+                  <TextLink href="/terms">Terms</TextLink> and{' '}
+                  <TextLink href="/privacy">Privacy</TextLink>.
                 </p>
                 <p>
-                  Вече имате акаунт? <TextLink href="/влез">Влезте от тук</TextLink>.
+                  Already have an account? <TextLink href="/login">Login here</TextLink>.
                 </p>
               </div>
             </form>
@@ -183,9 +186,30 @@ export default function RegisterPage() {
       <div className={styles.side}>
         <SideSlideshow
           slides={[
-            <Image key="picnic" src={Picnic} alt="Picnic" fill style={{ objectFit: 'cover' }} />,
-            <Image key="birthday" src={Birthday} alt="Birthday" fill style={{ objectFit: 'cover' }} />,
-            <Image key="wedding" src={Wedding} alt="Wedding" fill style={{ objectFit: 'cover' }} />,
+            <Image
+              key="random1"
+              src="https://picsum.photos/480/960?random=1"
+              alt="Random 1"
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
+            />,
+            <Image
+              key="random2"
+              src="https://picsum.photos/480/960?random=2"
+              alt="Random 2"
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
+            />,
+            <Image
+              key="random3"
+              src="https://picsum.photos/480/960?random=3"
+              alt="Random 3"
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
+            />,
           ]}
         />
       </div>

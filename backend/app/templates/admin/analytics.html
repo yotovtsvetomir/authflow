@@ -2,145 +2,28 @@
 <div class="analytics-wrapper">
     <!-- Users Section -->
     <div class="analytics-card">
-        <h1>Потребители</h1>
+        <a href="/admin/dashboard">Back</a>
+
+        <h1>Users</h1>
         <ul>
             <li>
-                <span>Активни потребители (последни 15 минути)</span> 
+                <span>Active users (last 15 minutes)</span> 
                 <span><b>{{ active_users_recent }}</b></span>
             </li>
             <li>
-                <span>Потребители днес</span> 
+                <span>Users today</span> 
                 <span><b>{{ active_users_today }}</b></span>
             </li>
             <li>
-                <span>Потребители този месец</span> 
+                <span>Users this month</span> 
                 <span><b>{{ active_users_this_month }}</b></span>
             </li>
             <li>
-                <span>Общо регистрирани клиенти</span> 
+                <span>Total registered customers</span> 
                 <span><b>{{ total_customers }}</b></span>
             </li>
         </ul>
-    </div>
-
-    <!-- Orders - Daily -->
-    <div class="analytics-card">
-        <h1>Поръчки днес</h1>
-        <ul>
-            <li>
-                <span>Брой поръчки</span> 
-                <span><b>{{ orders_count_today }}</b></span>
-            </li>
-            <li>
-                <span>Общ приход</span> 
-                <span><b>{{ total_revenue_today_bgn | round(2) }} BGN</b></span>
-            </li>
-            <li>
-                <span>Средна стойност</span> 
-                <span><b>{{ avg_order_today_bgn | round(2) }} BGN</b></span>
-            </li>
-        </ul>
-        {% if top_tiers_daily %}
-        <h2>Топ 3 пакета днес</h2>
-        <ul>
-            {% for tier in top_tiers_daily %}
-            <li class="tier-item">
-                <span>{{ tier.duration_days }} дни - {{ tier.price }} {{ tier.currency }} ({{ tier.price_bgn|round(2) }} BGN)</span>
-                <span class="tier-count">{{ tier.orders_count }} поръчки</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-
-    <!-- Orders - Monthly -->
-    <div class="analytics-card">
-        <h1>Поръчки този месец</h1>
-        <ul>
-            <li>
-                <span>Брой поръчки</span> 
-                <span><b>{{ orders_count_month }}</b></span>
-            </li>
-            <li>
-                <span>Общ приход</span> 
-                <span><b>{{ total_revenue_month_bgn | round(2) }} BGN</b></span>
-            </li>
-            <li>
-                <span>Средна стойност</span> 
-                <span><b>{{ avg_order_month_bgn | round(2) }} BGN</b></span>
-            </li>
-        </ul>
-        {% if top_tiers_month %}
-        <h2>Топ 3 пакета този месец</h2>
-        <ul>
-            {% for tier in top_tiers_month %}
-            <li class="tier-item">
-                <span>{{ tier.duration_days }} дни - {{ tier.price }} {{ tier.currency }} ({{ tier.price_bgn|round(2) }} BGN)</span>
-                <span class="tier-count">{{ tier.orders_count }} поръчки</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-
-    <!-- Orders - Last Month -->
-    <div class="analytics-card">
-        <h1>Поръчки миналия месец</h1>
-        <ul>
-            <li>
-                <span>Брой поръчки</span> 
-                <span><b>{{ orders_count_last_month }}</b></span>
-            </li>
-            <li>
-                <span>Общ приход</span> 
-                <span><b>{{ total_revenue_last_month_bgn | round(2) }} BGN</b></span>
-            </li>
-            <li>
-                <span>Средна стойност</span> 
-                <span><b>{{ avg_order_last_month_bgn | round(2) }} BGN</b></span>
-            </li>
-        </ul>
-        {% if top_tiers_last_month %}
-        <h2>Топ 3 пакета миналия месец</h2>
-        <ul>
-            {% for tier in top_tiers_last_month %}
-            <li class="tier-item">
-                <span>{{ tier.duration_days }} дни - {{ tier.price }} {{ tier.currency }} ({{ tier.price_bgn|round(2) }} BGN)</span>
-                <span class="tier-count">{{ tier.orders_count }} поръчки</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-
-    <!-- Orders - Yearly -->
-    <div class="analytics-card">
-        <h1>Поръчки тази година</h1>
-        <ul>
-            <li>
-                <span>Брой поръчки</span> 
-                <span><b>{{ orders_count_year }}</b></span>
-            </li>
-            <li>
-                <span>Общ приход</span> 
-                <span><b>{{ total_revenue_year_bgn | round(2) }} BGN</b></span>
-            </li>
-            <li>
-                <span>Средна стойност</span> 
-                <span><b>{{ avg_order_year_bgn | round(2) }} BGN</b></span>
-            </li>
-        </ul>
-        {% if top_tiers_year %}
-        <h2>Топ 3 пакета тази година</h2>
-        <ul>
-            {% for tier in top_tiers_year %}
-            <li class="tier-item">
-                <span>{{ tier.duration_days }} дни - {{ tier.price }} {{ tier.currency }} ({{ tier.price_bgn|round(2) }} BGN)</span>
-                <span class="tier-count">{{ tier.orders_count }} поръчки</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        <p>Each visitor gets a unique_id cookie on their first visit, ensuring 100% accurate unique visitor counts. Active users are tracked in real time and marked inactive after 15 minutes of inactivity, giving precise online user metrics.</p>
     </div>
 </div>
 {% endblock %}
@@ -157,9 +40,30 @@ body {
     padding-top: 50px;
 }
 
+a {
+    margin-bottom: 20px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    width: 30%;
+    padding: 12px 0;
+    background-color: #00a8ff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+a:hover {
+    background-color: #0097e6;
+}
+
 .analytics-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: center;
     gap: 2rem;
     max-width: 1200px;
     width: 90%;
@@ -167,6 +71,7 @@ body {
 }
 
 .analytics-card {
+    width: 50%;
     background: #fff;
     padding: 2rem 3rem;
     border-radius: 12px;

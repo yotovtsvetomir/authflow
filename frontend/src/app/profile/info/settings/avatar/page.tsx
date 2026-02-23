@@ -62,7 +62,7 @@ export default function Editprofile_pictureForm() {
   return (
     <div className="container fullHeight">
       <div className={styles.sectionWrapper}>
-        <h2>Профилна снимка</h2>
+        <h2>Profile picture</h2>
 
         <form onSubmit={handleSubmit}>
           <div
@@ -94,18 +94,18 @@ export default function Editprofile_pictureForm() {
               style={{ display: "none" }}
             />
             <label htmlFor="profile_picture-upload">
-              <span className={styles.btnContent}>Качи профилна снимка</span>
+              <span className={styles.btnContent}>Upload profile picture</span>
               <span className="material-symbols-outlined">add_a_photo</span>
             </label>
           </div>
 
           <div className={styles.avatarActions}>
             <Link href="/profile/info">
-              <Button variant="ghost">Назад</Button>
+              <Button variant="ghost">Back</Button>
             </Link>
 
             <Button type="submit" disabled={loading || !profile_picture}>
-              {loading ? "Качване..." : "Запази"}
+              {loading ? "Uploading..." : "Save"}
             </Button>
           </div>
         </form>

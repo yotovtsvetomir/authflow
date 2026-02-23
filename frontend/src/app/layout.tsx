@@ -6,6 +6,7 @@ import { UserProvider } from "@/context/UserContext";
 import { fetchUserSSR } from "@/server/user";
 
 import SessionTimeoutHandler from "@/utils/SessionTimeoutHandler";
+import UserActivityTracker from "@/utils/UserActivityTracker";
 
 import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
 import CookieConsent from '@/components/CookieConsent/CookieConsent';
@@ -34,6 +35,7 @@ export default async function RootLayout({
       <body className={nunito.variable}>
         <UserProvider initialUser={user}>
           <SessionTimeoutHandler />
+          <UserActivityTracker />
           <LayoutWrapper>
             {children}
           </LayoutWrapper>

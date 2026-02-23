@@ -58,13 +58,13 @@ export default function EditNameForm() {
   return (
     <div className="container fullHeight">
       <div className={styles.sectionWrapper}>
-        <h2>Име и фамилия</h2>
+        <h2>First name and Last name</h2>
 
         <form onSubmit={handleSubmit} noValidate>
           <Input
             id="firstName"
             name="firstName"
-            label="Име"
+            label="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             error={errors.firstName}
@@ -74,7 +74,7 @@ export default function EditNameForm() {
           <Input
             id="lastName"
             name="lastName"
-            label="Фамилия"
+            label="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             error={errors.lastName}
@@ -84,7 +84,7 @@ export default function EditNameForm() {
 
           <div className={styles.avatarActions}>
             <Link href="/profile/info">
-              <Button variant="ghost">Назад</Button>
+              <Button variant="ghost">Back</Button>
             </Link>
 
             <Button
@@ -93,7 +93,7 @@ export default function EditNameForm() {
                 loading || (firstName === user?.first_name && lastName === user?.last_name)
               }
             >
-              {loading ? "Записване..." : "Запази"}
+              {loading ? "Uploading..." : "Save"}
             </Button>
           </div>
         </form>

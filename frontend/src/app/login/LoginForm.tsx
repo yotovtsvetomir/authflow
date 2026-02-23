@@ -7,6 +7,7 @@ import { Heading } from '@/ui-components/Heading/Heading';
 import { TextLink } from '@/ui-components/TextLink/TextLink';
 import SideSlideshow from '@/ui-components/SideSlideshow/SideSlideshow';
 
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './LoginForm.module.css';
@@ -18,6 +19,8 @@ import Birthday from '@/assets/birthday.png';
 import Wedding from '@/assets/wedding.png';
 
 export default function Login() {
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from') || '/profile';
 
   const {
     formData,
@@ -30,7 +33,7 @@ export default function Login() {
     handleGoogleLogin,
     handleFacebookLogin,
     fbReady,
-  } = useLogin();
+  } = useLogin({ redirectTo: from });
 
   return (
     <div className={styles.screen}>
@@ -39,25 +42,18 @@ export default function Login() {
           <div className={styles.head}>
             <Link href="/">
               <Image
-                src={LogoLetters}
-                width={150}
-                height={15}
+                src={Logo}
+                width={60}
+                height={50}
                 alt="Logo"
-                className={styles.logoLetters}
+                className={styles.Logo}
               />
             </Link>
           </div>
 
           <div className={styles.formWrapper}>
             <div className={styles.formHeader}>
-              <Image
-                src={Logo}
-                width={44}
-                height={34}
-                alt="Logo"
-                className={styles.logo}
-              />
-              <Heading marginBottom="1rem" as="h1" size="3xl" color="--color-dark-300" align="center">Добре дошли</Heading>
+              <Heading marginBottom="1rem" as="h1" size="3xl" color="--color-dark-300" align="center">Welcome</Heading>
             </div>
 
             <div className={styles.socialLogin}>
@@ -69,7 +65,7 @@ export default function Login() {
                   alt="Google Logo"
                   className={styles.sociallogo}
                 />
-                <p>Влез с Google</p>
+                <p>Sign in with Google</p>
               </Button>
 
               <div style={{ marginBottom: "1rem" }} />
@@ -82,12 +78,12 @@ export default function Login() {
                   alt="Facebook Logo"
                   className={styles.sociallogo}
                 />
-                <p>Влез с Facebook</p>
+                <p>Sign in with Facebook</p>
               </Button>
             </div>
 
             <div className={styles.divider}>
-              <p>или</p>
+              <p>or</p>
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
@@ -95,7 +91,7 @@ export default function Login() {
                 id="email"
                 name="email"
                 type="email"
-                label="Въведи имейл"
+                label="Email"
                 value={formData.email}
                 onChange={handleChange}
                 onFocus={handleFocus('email')}
@@ -107,7 +103,7 @@ export default function Login() {
                 id="password"
                 name="password"
                 type="password"
-                label="Въведи парола"
+                label="Password"
                 value={formData.password}
                 onChange={handleChange}
                 onFocus={handleFocus('password')}
@@ -116,20 +112,36 @@ export default function Login() {
               />
 
               <Button width="100%" type="submit" variant="primary" disabled={loading}>
-                {loading ? 'Влизам...' : 'Вход'}
+                {loading ? 'Signing in...' : 'Login'}
               </Button>
 
+              {formErrors.apiError && (
+                <p className={styles.errorMessage}>
+                  {formErrors.apiError.includes('confirm your email') ? (
+                    <>
+                      Please check your email to confirm your account before logging in.
+                      <br />
+                      <br />
+                      {"Don't forget to check spam folder."}
+                    </>
+                  ) : (
+                    formErrors.apiError
+                  )}
+                </p>
+              )}
+
+              {success && <p className={styles.successMessage}>Login successful!</p>}
+
               <div className={styles.buttonSecondaryGroup}>
-                <p>Като продължите, вие се съгласявате с нашите <TextLink href="/privacy" color="accent">Условия</TextLink> и <TextLink href="/privacy" color="accent">Политика за поверителност</TextLink>.</p>
+                <p>By continuing, you agree to our <TextLink href="/privacy" color="accent">Terms</TextLink> and <TextLink href="/privacy" color="accent">Privacy</TextLink>.</p>
                 <p>
-                  Нямате акаунт? <TextLink href="/register" color="accent">Регистрирайте се</TextLink>.
+                  {"Don't have an account?"} <TextLink href="/register" color="accent">Register</TextLink>.
                 </p>
                 <p>
-                  Забравена парола? <TextLink href="/password-reset/request/" color="accent">Натиснете тук</TextLink>.
+                  Forgot your password? <TextLink href="/password-reset/request/" color="accent">Click here</TextLink>.
                 </p>
               </div>
 
-              {success && <p className={styles.successMessage}>Успешен вход!</p>}
             </form>
           </div>
         </div>
@@ -138,26 +150,29 @@ export default function Login() {
         <SideSlideshow
           slides={[
             <Image
-              key="bday"
-              src={Picnic}
-              alt="Birthday"
+              key="random1"
+              src="https://picsum.photos/480/960?random=1"
+              alt="Random 1"
               fill
-              style={{objectFit: 'cover'}}
+              style={{ objectFit: 'cover' }}
+              unoptimized
             />,
             <Image
-              key="bday"
-              src={Birthday}
-              alt="Birthday"
+              key="random2"
+              src="https://picsum.photos/480/960?random=2"
+              alt="Random 2"
               fill
-              style={{objectFit: 'cover'}}
+              style={{ objectFit: 'cover' }}
+              unoptimized
             />,
             <Image
-              key="bday"
-              src={Wedding}
-              alt="Birthday"
+              key="random3"
+              src="https://picsum.photos/480/960?random=3"
+              alt="Random 3"
               fill
-              style={{objectFit: 'cover'}}
-            />
+              style={{ objectFit: 'cover' }}
+              unoptimized
+            />,
           ]}
         />
       </div>

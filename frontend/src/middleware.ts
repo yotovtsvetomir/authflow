@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/profile"];
+const protectedRoutes = ["/profile", "/blogposts", "/blogpost"];
 const authPages = ["/login", "/logout", "/password-reset/request"];
 
 export async function middleware(req: NextRequest) {
@@ -34,8 +34,12 @@ export async function middleware(req: NextRequest) {
 
   // Not logged in → block protected pages
   if (!sessionId && isProtectedPage) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const url = req.nextUrl.clone();
+    url.pathname = "/auth-required";
+    url.searchParams.set("from", req.nextUrl.pathname);
+    return NextResponse.redirect(url);
   }
+
 
   // Ensure `unique_id` exists
   if (!sessionId && !anonymousSessionId) {

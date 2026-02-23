@@ -1,11 +1,11 @@
-from sqlalchemy import or_, and_, text, desc, asc, select, bindparam
+from sqlalchemy import select, or_, and_, text, bindparam, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.dialects.postgresql import ARRAY
 from transliterate import translit
 import re
 
 LATIN_RE = re.compile(r"[A-Za-z]")
 CYRILLIC_RE = re.compile(r"[А-Яа-я]")
-
 
 async def apply_filters_search_ordering(
     model,
@@ -19,6 +19,7 @@ async def apply_filters_search_ordering(
     filters = filters or []
     search_columns = search_columns or []
 
+    # Set the pg_trgm similarity threshold
     await db.execute(text(f"SET pg_trgm.similarity_threshold = {trigram_threshold}"))
 
     async def build_filters(query: str):
@@ -29,12 +30,15 @@ async def apply_filters_search_ordering(
             return None
         search_filters = []
 
+        # Apply search filters for each word
         for idx, word in enumerate(words):
             word_column_filters = []
             for col in search_columns:
                 if len(word) < 4:
+                    # Simple ILIKE filter for short words
                     word_column_filters.append(col.ilike(f"%{word}%"))
                 else:
+                    # Trigram similarity filter for longer words
                     word_column_filters.append(
                         text(f"{col.key} % :word{idx}").bindparams(
                             bindparam(f"word{idx}", word)
@@ -44,6 +48,7 @@ async def apply_filters_search_ordering(
             search_filters.append(or_(*word_column_filters))
         return and_(*search_filters)
 
+    # Apply filters to the query
     filt = await build_filters(search)
     temp_filters = filters.copy()
     if filt is not None:
@@ -53,6 +58,7 @@ async def apply_filters_search_ordering(
         if result.scalars().first():
             filters.append(filt)
         else:
+            # Handle transliteration for non-latin text
             search_translit = None
             try:
                 if search and LATIN_RE.search(search):
@@ -67,7 +73,7 @@ async def apply_filters_search_ordering(
                 if filt_translit is not None:
                     filters.append(filt_translit)
 
-    # Ordering
+    # Ordering logic
     if ordering.startswith("-"):
         order_column = getattr(model, ordering[1:], getattr(model, "created_at"))
         order_by = [desc(order_column)]

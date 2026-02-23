@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { email, password, first_name, last_name } = body;
+  const { email, password, first_name, last_name, redirect_to } = body;
 
   try {
     const cookieHeader = req.headers.get("cookie") || "";
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
         Cookie: cookieHeader,
       },
-      body: JSON.stringify({ email, password, first_name, last_name }),
+      body: JSON.stringify({ email, password, first_name, last_name, redirect_to }),
     });
 
     if (!response.ok) {

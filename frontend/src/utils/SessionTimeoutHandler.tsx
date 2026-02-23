@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Modal from "@/ui-components/Modal/Modal";
 import { useUser } from "@/context/UserContext";
 
-const SESSION_TIMEOUT = 1000 * 60 * 15; // 15 min
+const SESSION_TIMEOUT = 1000 * 60 * 15;
 const COUNTDOWN_SECONDS = 20;
 
 export default function SessionTimeoutHandler() {
@@ -96,10 +96,10 @@ export default function SessionTimeoutHandler() {
 
   return (
     <Modal
-      title="Времето на сесията изтича"
-      description={`Вашата сесия ще изтече след ${countdown} секунди. Искате ли да я удължите?`}
-      confirmText="Да"
-      cancelText="Не"
+      title="Your session is expiring"
+      description={`Your session will expire in ${countdown} seconds. Do you want to extend it?`}
+      confirmText="Yes"
+      cancelText="No"
       onConfirm={refreshSession}
       onCancel={handleLogout}
       danger={false}

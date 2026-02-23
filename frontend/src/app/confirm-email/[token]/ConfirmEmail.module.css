@@ -1,0 +1,18 @@
+.container {
+  max-width: 480px;
+  margin: 6rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.success {
+  color: #4caf50;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.error {
+  color: #ff6a5b;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}

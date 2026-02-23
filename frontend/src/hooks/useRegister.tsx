@@ -10,7 +10,11 @@ type RegisterFormErrors = {
   apiError?: string;
 };
 
-export function useRegister() {
+interface UseRegisterOptions {
+  redirectTo?: string;
+}
+
+export function useRegister({ redirectTo = "/profile" }: UseRegisterOptions = {}) {
   const [values, setValues] = useState<RegisterFormValues>({
     email: "",
     password: "",
@@ -27,23 +31,23 @@ export function useRegister() {
     const newErrors: RegisterFormErrors = {};
 
     if (!values.first_name || values.first_name.length < 2) {
-      newErrors.first_name = "Името трябва да е поне 2 символа";
+      newErrors.first_name = "First name must be at least 2 characters";
     }
 
     if (!values.last_name || values.last_name.length < 2) {
-      newErrors.last_name = "Фамилията трябва да е поне 2 символа";
+      newErrors.last_name = "Last name must be at least 2 characters";
     }
 
     if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      newErrors.email = "Имейлът трябва да е валиден";
+      newErrors.email = "Email must be valid";
     }
 
     if (!values.password || values.password.length < 7) {
-      newErrors.password = "Паролата трябва да е поне 7 символа";
+      newErrors.password = "Password must be at least 7 characters";
     }
 
     if (values.password !== confirmPassword) {
-      newErrors.confirmPassword = "Паролите не съвпадат";
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
@@ -70,16 +74,20 @@ export function useRegister() {
 
     setLoading(true);
 
+    const body = {
+      ...values,
+      redirect_to: redirectTo,
+    };
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        console.log(data)
         if (Array.isArray(data.error) && data.error.length > 0) {
           const rawMsg = data.error[0].msg;
           const cleanedMsg = rawMsg.replace(/^Value error, /, "");
@@ -87,17 +95,17 @@ export function useRegister() {
         } else if (typeof data.error === "string") {
           setErrors({ apiError: data.error });
         } else {
-          setErrors({ apiError: "Регистрацията неуспешна" });
+          setErrors({ apiError: "Registration failed" });
         }
-
         return;
       }
 
       setSuccess(true);
-      window.location.href = "/profile";
+
+      window.location.href = `/login?from=${encodeURIComponent(redirectTo)}`;
     } catch (error) {
       setErrors({
-        apiError: error instanceof Error ? error.message : "Сървърна грешка",
+        apiError: error instanceof Error ? error.message : "Server error",
       });
     } finally {
       setLoading(false);
@@ -110,8 +118,10 @@ export function useRegister() {
     const scope = "openid email profile";
     const responseType = "code";
 
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
-    window.open(url, "google-register", "width=500,height=600");
+    const state = encodeURIComponent(JSON.stringify({ from: redirectTo }));
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}&state=${state}`;
+    window.open(url, "google-login", "width=500,height=600");
   };
 
   const handleFacebookRegister = () => {
@@ -121,8 +131,10 @@ export function useRegister() {
     const responseType = "code";
     const authType = "rerequest";
 
-    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}&auth_type=${authType}`;
-    window.open(url, "facebook-register", "width=500,height=600");
+    const state = encodeURIComponent(JSON.stringify({ from: redirectTo }));
+
+    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}&auth_type=${authType}&state=${state}`;
+    window.open(url, "facebook-login", "width=500,height=600");
   };
 
   return {

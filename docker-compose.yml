@@ -1,6 +1,17 @@
+version: '3.9'
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata_writer:
+  pgdata_reader:
+  minio_data:
+
 services:
   # -----------------------------
-  # PostgreSQL Cluster
+  # PostgreSQL Master/Replica
   # -----------------------------
   db_writer:
     image: bitnami/postgresql:latest
@@ -14,7 +25,7 @@ services:
     volumes:
       - pgdata_writer:/bitnami/postgresql
     networks:
-      - cluster_net
+      - app-network
 
   db_reader:
     image: bitnami/postgresql:latest
@@ -31,7 +42,55 @@ services:
     volumes:
       - pgdata_reader:/bitnami/postgresql
     networks:
-      - cluster_net
+      - app-network
+
+  pgbouncer_writer:
+    image: edoburu/pgbouncer:latest
+    depends_on:
+      - db_writer
+    networks:
+      - app-network
+    ports:
+      - "6433:6433"
+    volumes:
+      - ./backend/pgbouncer_writer:/etc/pgbouncer
+    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
+
+  pgbouncer_reader:
+    image: edoburu/pgbouncer:latest
+    depends_on:
+      - db_reader
+    networks:
+      - app-network
+    ports:
+      - "6434:6434"
+    volumes:
+      - ./backend/pgbouncer_reader:/etc/pgbouncer
+    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
+
+  pgbouncer_celery_writer:
+    image: edoburu/pgbouncer:latest
+    depends_on:
+      - db_writer
+    networks:
+      - app-network
+    ports:
+      - "6435:6435"
+    volumes:
+      - ./backend/pgbouncer_celery_writer:/etc/pgbouncer
+    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
+
+  pgbouncer_celery_reader:
+    image: edoburu/pgbouncer:latest
+    depends_on:
+      - db_reader
+    networks:
+      - app-network
+    ports:
+      - "6436:6436"
+    volumes:
+      - ./backend/pgbouncer_celery_reader:/etc/pgbouncer
+    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
 
   # -----------------------------
   # Redis
@@ -39,149 +98,72 @@ services:
   redis:
     image: redis:7
     networks:
-      - cluster_net
+      - app-network
 
   # -----------------------------
-  # Backend + PgBouncer Sidecars
+  # Backend
   # -----------------------------
   backend:
-    build: ./backend
-    volumes:
-      - ./backend:/app
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - pgbouncer_backend_writer
-      - pgbouncer_backend_reader
-      - redis
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    networks:
-      - cluster_net
-      - ingress_net
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-  pgbouncer_backend_writer:
-    image: edoburu/pgbouncer
-    depends_on:
-      - db_writer
-    volumes:
-      - ./backend/pgbouncer_writer:/etc/pgbouncer
-    networks:
-      - cluster_net
-      - ingress_net
-    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
-
-  pgbouncer_backend_reader:
-    image: edoburu/pgbouncer
-    depends_on:
-      - db_reader
-    volumes:
-      - ./backend/pgbouncer_reader:/etc/pgbouncer
-    networks:
-      - cluster_net
-      - ingress_net
-    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
-
-  # -----------------------------
-  # Celery Worker + Beat + PgBouncer Sidecars
-  # -----------------------------
-  celery_worker:
-    build: ./backend
-    volumes:
-      - ./backend:/app
     env_file:
       - ./backend/.env
-    depends_on:
-      - pgbouncer_celery_writer
-      - pgbouncer_celery_reader
-      - redis
-    command: celery -A app.celery_app worker --loglevel=info
-    networks:
-      - cluster_net
-
-  celery_beat:
-    build: ./backend
-    volumes:
-      - ./backend:/app
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - pgbouncer_celery_writer
-      - pgbouncer_celery_reader
-      - redis
-    command: celery -A app.celery_app beat --loglevel=info
-    networks:
-      - cluster_net
-
-  pgbouncer_celery_writer:
-    image: edoburu/pgbouncer
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
       - db_writer
-    volumes:
-      - ./backend/pgbouncer_writer:/etc/pgbouncer
-    networks:
-      - cluster_net
-    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
-
-  pgbouncer_celery_reader:
-    image: edoburu/pgbouncer
-    depends_on:
       - db_reader
-    volumes:
-      - ./backend/pgbouncer_reader:/etc/pgbouncer
-    networks:
-      - cluster_net
-    command: ["pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
-
-  # -----------------------------
-  # Flower (Celery Monitoring)
-  # -----------------------------
-  flower:
-    image: mher/flower
-    environment:
-      - CELERY_BROKER=redis://redis:6379/0
-    ports:
-      - "5555:5555"
-    depends_on:
       - redis
+    volumes:
+      - ./backend:/app
     networks:
-      - cluster_net
-      - ingress_net
+      - app-network
 
   # -----------------------------
-  # Frontend / Next.js
+  # Frontend (Next.js production)
   # -----------------------------
   frontend:
-    build: ./frontend
-    volumes:
-      - ./frontend:/app
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
     ports:
       - "3000:3000"
-    env_file:
-      - ./frontend/.env
-    command: sh -c "npm install --legacy-peer-deps && npm run dev"
+    environment:
+      - NODE_ENV=dev
     depends_on:
       - backend
     networks:
-      - cluster_net
-      - ingress_net
+      - app-network
+    command: sh -c "npm run start"
 
+  # -----------------------------
+  # Storybook
+  # -----------------------------
   storybook:
     build:
       context: ./frontend
-      target: storybook
-    container_name: storybook
+      dockerfile: Dockerfile
+      args:
+        INSTALL_PLAYWRIGHT: "true"
     ports:
       - "6006:6006"
     volumes:
       - ./frontend:/app
-    command: npm run storybook
+      - /app/node_modules
+    command: sh -c "npm run build-storybook && npx http-server storybook-static -p 6006"
+    environment:
+      - NODE_ENV=dev
+    depends_on:
+      - backend
     networks:
-      - ingress_net
+      - app-network
 
   # -----------------------------
-  # S3 Storage (MinIO)
+  # MinIO
   # -----------------------------
   s3_storage:
     image: minio/minio:latest
@@ -195,32 +177,44 @@ services:
     volumes:
       - minio_data:/data
     networks:
-      cluster_net:
-        aliases:
-          - minio.local
-      ingress_net:
-        aliases:
-          - minio.local
+      - app-network
 
   # -----------------------------
-  # Email (MailHog)
+  # Celery Worker + Beat
   # -----------------------------
-  email_service:
-    image: mailhog/mailhog:latest
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    command: celery -A app.celery_app worker --loglevel=info
+    depends_on:
+      - backend
+      - redis
     networks:
-      - cluster_net
-      - ingress_net
+      - app-network
 
-volumes:
-  pgdata_writer:
-  pgdata_reader:
-  minio_data:
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    command: celery -A app.celery_app beat --loglevel=info
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - app-network
 
-networks:
-  cluster_net:
-    driver: bridge
-  ingress_net:
-    driver: bridge
+  flower:
+    image: mher/flower
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    networks:
+      - app-network
